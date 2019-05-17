@@ -27,7 +27,7 @@ public class ResultUtil {
      * 成功时候的调用（无返回数据）
      * @return
      */
-    public static <T> ResultVO<T> success(){
+    public static ResultVO success(){
         return success(null);
     }
 

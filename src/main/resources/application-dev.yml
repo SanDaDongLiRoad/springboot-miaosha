@@ -17,7 +17,7 @@ spring:
     pool:
       max-active: 1000
       max-idle: 500
-      max-wait:
+      max-wait: 3
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
