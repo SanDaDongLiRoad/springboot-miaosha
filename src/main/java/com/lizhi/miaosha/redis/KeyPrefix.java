@@ -1,4 +1,4 @@
-package com.lizhi.miaosha.rediskey;
+package com.lizhi.miaosha.redis;
 
 /**
  * redis key

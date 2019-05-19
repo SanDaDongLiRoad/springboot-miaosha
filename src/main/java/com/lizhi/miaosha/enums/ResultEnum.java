@@ -16,7 +16,15 @@ public enum ResultEnum {
      */
     ERROR(-1,"服务端异常"),
     SUCCESS(0, "成功"),
-    PARAM_ERROR(1, "参数校验异常：%s"),
+    CONTROLLER_PARAM_ERROR(1, "控制层参数校验异常：%s"),
+    SERVICE_PARAM_ERROR(2, "业务层参数校验异常：%s"),
+    NO_EXIST(3,"该条数据不存在"),
+
+    /**
+     * 登录相关状态码
+     */
+    MOBILE_NOT_EXIST(1001,"手机号不存在"),
+    PASSWORD_ERROR(1002,"密码不正确"),
     ;
 
     /**

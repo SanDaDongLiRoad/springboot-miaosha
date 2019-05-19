@@ -1,6 +1,5 @@
-package com.lizhi.miaosha.util;
+package com.lizhi.miaosha.redis;
 
-import com.lizhi.miaosha.rediskey.KeyPrefix;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
@@ -21,7 +20,7 @@ import static com.lizhi.miaosha.convert.CommonConvert.stringToBean;
  * @date 2019/5/17
  */
 @Service
-public class JedisUtil {
+public class JedisService {
 
     @Autowired
     private JedisPool jedisPool;

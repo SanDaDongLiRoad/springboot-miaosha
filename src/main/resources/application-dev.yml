@@ -13,7 +13,6 @@ spring:
     host: 127.0.0.1
     port: 6379
     timeout: 10
-    password:
     pool:
       max-active: 1000
       max-idle: 500
@@ -25,7 +24,6 @@ spring:
     content-type: text/html
     enabled: true
     encoding: UTF-8
-    mode: HTML
 mybatis:
   type-aliases-package: com.lizhi.miaosha.domain
   mapper-locations: classpath:com/lizhi/miaosha/dao/*.xml

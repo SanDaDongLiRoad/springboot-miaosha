@@ -7,4 +7,6 @@ package com.lizhi.miaosha.constant;
  * @date 2019/5/17
  */
 public class CommonConstant {
+
+    public static final String COOKI_NAME_TOKEN = "token";
 }
