@@ -2,7 +2,7 @@
 $.namespace("miaosha.Common");
 miaosha.Common = {
     //salt
-    g_passsword_salt : "1a2b3c4d",
+    passsword_salt : "1a2b3c4d",
     /**
      * 展示loading
      * @returns {*}
