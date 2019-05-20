@@ -1,22 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>商品详情</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <!-- jquery -->
-        <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
-        <!-- bootstrap -->
-        <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}" />
-        <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
-        <!-- jquery-validator -->
-        <script type="text/javascript" th:src="@{/jquery-validation/jquery.validate.min.js}"></script>
-        <script type="text/javascript" th:src="@{/jquery-validation/localization/messages_zh.min.js}"></script>
-        <!-- layer -->
-        <script type="text/javascript" th:src="@{/layer/layer.js}"></script>
-        <!-- md5.js -->
-        <script type="text/javascript" th:src="@{/js/md5.min.js}"></script>
-        <!-- common.js -->
-        <script type="text/javascript" th:src="@{/js/common.js}"></script>
+        <div th:replace="common/common::commonHeader('商品详情')"></div>
+        <script type="text/javascript" th:src="@{/js/goods_detail.js}"></script>
     </head>
     <body>
         <div class="panel panel-default">
@@ -65,30 +51,4 @@
           </table>
         </div>
     </body>
-    <script>
-        $(function(){
-            countDown();
-        });
-        function countDown(){
-            var remainSeconds = $("#remainSeconds").val();
-            var timeout;
-            if(remainSeconds > 0){//秒杀还没开始，倒计时
-                $("#buyButton").attr("disabled", true);
-                timeout = setTimeout(function(){
-                    $("#countDown").text(remainSeconds - 1);
-                    $("#remainSeconds").val(remainSeconds - 1);
-                    countDown();
-                },1000);
-            }else if(remainSeconds == 0){//秒杀进行中
-                $("#buyButton").attr("disabled", false);
-                if(timeout){
-                    clearTimeout(timeout);
-                }
-                $("#miaoshaTip").html("秒杀进行中");
-            }else{//秒杀已经结束
-                $("#buyButton").attr("disabled", true);
-                $("#miaoshaTip").html("秒杀已经结束");
-            }
-        }
-    </script>
 </html>
