@@ -74,4 +74,15 @@ public class MiaoshaGoodsServiceImpl implements MiaoshaGoodsService {
         miaoshaGoodsVO.setEndDate(miaoshaGoods.getEndDate());
         return miaoshaGoodsVO;
     }
+
+    @Override
+    public boolean reduceStock(Long goodsId) {
+        log.info("reduceStock requestParam goodsId is: {}",goodsId);
+        if(Objects.equals(null,goodsId)){
+            throw new GlobalException(ResultEnum.SERVICE_PARAM_ERROR.fillArgs("goodsId为空"));
+        }
+        int flag = miaoshaGoodsDao.reduceStock(goodsId);
+        log.info("reduceStock result flag is: {}",flag);
+        return flag > 0;
+    }
 }

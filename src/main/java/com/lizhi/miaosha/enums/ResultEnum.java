@@ -25,6 +25,12 @@ public enum ResultEnum {
      */
     MOBILE_NOT_EXIST(1001,"手机号不存在"),
     PASSWORD_ERROR(1002,"密码不正确"),
+
+    /**
+     * 秒杀相关状态码
+     */
+    MIAO_SHA_OVER(2001,"商品已经秒杀完毕"),
+    REPEATE_MIAOSHA(2002,"不能重复秒杀"),
     ;
 
     /**

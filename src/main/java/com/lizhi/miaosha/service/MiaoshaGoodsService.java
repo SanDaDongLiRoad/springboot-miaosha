@@ -24,4 +24,11 @@ public interface MiaoshaGoodsService {
      * @return
      */
     MiaoshaGoodsVO queryMiaoshaGoodsVOById(Long goodsId);
+
+    /**
+     * 减库存
+     * @param goodsId
+     * @return
+     */
+    boolean reduceStock(Long goodsId);
 }

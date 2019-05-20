@@ -4,6 +4,7 @@ import com.lizhi.miaosha.domain.MiaoshaGoods;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -31,5 +32,12 @@ public interface MiaoshaGoodsDao {
     @Select("select * from miaosha_goods where goods_id = #{goodsId} and deleted = 0")
     MiaoshaGoods queryById(@Param("goodsId") Long goodsId);
 
+    /**
+     * 减商品库存
+     * @param goodsId
+     * @return
+     */
+    @Update("update miaosha_goods set stock_count = stock_count - 1 where goods_id = #{goodsId} and stock_count > 0")
+    int reduceStock(@Param("goodsId") Long goodsId);
 
 }
