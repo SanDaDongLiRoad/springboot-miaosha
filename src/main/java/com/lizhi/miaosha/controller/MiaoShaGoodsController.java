@@ -37,7 +37,7 @@ public class MiaoShaGoodsController {
         model.addAttribute("miaoshaUser", miaoshaUser);
         List<MiaoshaGoodsVO> miaoshaGoodsVOList = miaoshaGoodsService.queryMiaoshaGoodsVOList();
         model.addAttribute("miaoshaGoodsVOList", miaoshaGoodsVOList);
-        return "miaoshagoods_list";
+        return "goods_list";
     }
 
     /**
