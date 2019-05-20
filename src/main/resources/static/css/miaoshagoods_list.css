@@ -1,0 +1,10 @@
+body{
+    background:url('/img/bg2.jpg') no-repeat;
+    background-size:100% 100%;
+}
+#goodslist td{
+    border-top:1px solid black;
+}
+#miaoshagoods-list-module{
+    height:100%;background-color:rgba(222,222,222,0.8);
+}
