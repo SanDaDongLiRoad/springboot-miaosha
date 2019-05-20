@@ -69,6 +69,6 @@ public class MiaoShaGoodsController {
         }
         model.addAttribute("miaoshaStatus", miaoshaStatus);
         model.addAttribute("remainSeconds", remainSeconds);
-        return "miaoshagoods_detail";
+        return "goods_detail";
     }
 }
