@@ -37,7 +37,7 @@ public class MiaoshaServiceImpl implements MiaoshaService {
 
     @Transactional
     @Override
-    public OrderInfo miaosha(MiaoshaUser miaoshaUser, MiaoshaGoodsVO miaoshaGoodsVO) {
+    public Long miaosha(MiaoshaUser miaoshaUser, MiaoshaGoodsVO miaoshaGoodsVO) {
         log.info("miaosha requestParam miaoshaUser is: {},miaoshaGoodsVO is {}",miaoshaUser,miaoshaGoodsVO);
 
         //开始秒杀
@@ -63,6 +63,6 @@ public class MiaoshaServiceImpl implements MiaoshaService {
         miaoshaOrder.setOrderId(orderId);
         miaoshaOrder.setUserId(miaoshaUser.getId());
         miaoshaOrderService.saveMiaoshaOrder(miaoshaOrder);
-        return orderInfo;
+        return orderId;
     }
 }

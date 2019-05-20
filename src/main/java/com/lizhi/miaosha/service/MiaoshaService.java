@@ -18,5 +18,5 @@ public interface MiaoshaService {
      * @param miaoshaGoodsVO
      * @return
      */
-    OrderInfo miaosha(MiaoshaUser miaoshaUser, MiaoshaGoodsVO miaoshaGoodsVO);
+    Long miaosha(MiaoshaUser miaoshaUser, MiaoshaGoodsVO miaoshaGoodsVO);
 }

@@ -2,8 +2,17 @@ GoodsDetail = {
 
     // 定义模块初始化方法
     init: function() {
+        GoodsDetail.bindEvent();
         GoodsDetail.countDown();
     },
+
+    // 定义事件绑定
+    bindEvent : function() {
+
+        //执行秒杀
+        //$("#goodslist #buy-btn").on("click", GoodsDetail.doMiaosha());
+    },
+
     countDown : function(){
         var remainSeconds = $("#remainSeconds").val();
         var timeout;
@@ -24,6 +33,30 @@ GoodsDetail = {
             $("#buyButton").attr("disabled", true);
             $("#miaoshaTip").html("秒杀已经结束");
         }
+    },
+
+    doMiaosha : function () {
+        Common.showLoading();
+        var goodsId = $("#goodslist #goodsId").val();
+        $.ajax({
+            url: "/miaosha/do_miaosha",
+            type: "POST",
+            data:{
+                goodsId: goodsId
+            },
+            success:function(data){
+                layer.closeAll();
+                if(data.code == 0){
+                    layer.msg("秒杀成功");
+                    window.location.href="/orderInfo/queryOrderInfoDetail?orderIds="+data.data;
+                }else{
+                    layer.msg(data.msg);
+                }
+            },
+            error:function(){
+                layer.closeAll();
+            }
+        });
     }
 };
 $(function() {
