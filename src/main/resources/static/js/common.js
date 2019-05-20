@@ -1,6 +1,5 @@
 //定义命名空间根据模块名和页面名称定义
-$.namespace("miaosha.Common");
-miaosha.Common = {
+Common = {
     //salt
     passsword_salt : "1a2b3c4d",
     /**
