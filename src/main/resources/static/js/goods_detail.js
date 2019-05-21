@@ -10,7 +10,7 @@ GoodsDetail = {
     bindEvent : function() {
 
         //执行秒杀
-        //$("#goodslist #buy-btn").on("click", GoodsDetail.doMiaosha());
+        $("#goods-detail #buy-btn").on("click", GoodsDetail.doMiaosha);
     },
 
     countDown : function(){

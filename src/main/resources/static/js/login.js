@@ -9,7 +9,7 @@ Login = {
     bindEvent : function() {
 
         //登录
-        $("#loginForm #login-btn").on("click", Login.login());
+        $("#loginForm #login-btn").on("click", Login.login);
     },
 
     login : function(){
