@@ -35,7 +35,7 @@ Login = {
             success:function(data){
                 layer.closeAll();
                 if(data.code == 0){
-                    layer.msg("成功");
+                    layer.msg("登录成功");
                     window.location.href="/miaoShaGoods/to_list";
                 }else{
                     layer.msg(data.msg);

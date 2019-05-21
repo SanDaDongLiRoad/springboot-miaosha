@@ -20,7 +20,6 @@ import java.util.List;
  * @author XuLiZhi-MagicBook
  * @date 2019/5/19
  */
-@Slf4j
 @Controller
 @RequestMapping("miaoShaGoods")
 public class MiaoShaGoodsController {
@@ -43,7 +42,7 @@ public class MiaoShaGoodsController {
     }
 
     /**
-     * 秒杀商品
+     * 秒杀商品详情页
      * @param model
      * @param miaoshaUser
      * @param goodsId
@@ -59,10 +58,12 @@ public class MiaoShaGoodsController {
         long now = System.currentTimeMillis();
         int miaoshaStatus = 0;
         int remainSeconds = 0;
-        if(now < startDate ) {//秒杀还没开始，倒计时
+        //秒杀还没开始，倒计时
+        if(now < startDate ) {
             miaoshaStatus = 0;
             remainSeconds = (int)((startDate - now )/1000);
-        }else  if(now > endDate){//秒杀已经结束
+            //秒杀已经结束
+        }else  if(now > endDate){
             miaoshaStatus = 2;
             remainSeconds = -1;
         }else {//秒杀进行中
