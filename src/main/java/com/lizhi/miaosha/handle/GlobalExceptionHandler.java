@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public ResultVO<String> exceptionHandler(Exception e){
-        e.printStackTrace();
+        log.error("【异常信息】{}", e.getMessage());
         if(e instanceof GlobalException) {
             GlobalException globalException = (GlobalException)e;
             return ResultUtil.error(globalException.getResultEnum());
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
             String paramErrorMsg = error.getDefaultMessage();
             return ResultUtil.error(ResultEnum.CONTROLLER_PARAM_ERROR.fillArgs(paramErrorMsg));
         }else{
-            log.error("【系统异常】{}", e);
+            e.printStackTrace();
             return ResultUtil.error(ResultEnum.ERROR);
         }
     }
