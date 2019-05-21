@@ -21,7 +21,6 @@ import javax.validation.Valid;
  * @author XuLiZhi-MagicBook
  * @date 2019/5/19
  */
-@Slf4j
 @Controller
 @RequestMapping("login")
 public class LoginController {
