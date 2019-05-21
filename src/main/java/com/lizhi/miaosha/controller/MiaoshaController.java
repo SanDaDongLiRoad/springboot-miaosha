@@ -51,8 +51,19 @@ public class MiaoshaController {
     public ResultVO<Long> miaosha(Model model, MiaoshaUser miaoshaUser, @RequestParam("goodsId")Long goodsId){
         model.addAttribute("miaoshaUser", miaoshaUser);
 
-        //判断库存是否充足
         MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
+        //判断是否在秒杀期间
+        long startDate = miaoshaGoodsVO.getStartDate().getTime();
+        long endDate = miaoshaGoodsVO.getEndDate().getTime();
+        long now = System.currentTimeMillis();
+        if(now < startDate){
+            throw new GlobalException(ResultEnum.NO_START);
+        }
+        else if(now > endDate){
+            throw new GlobalException(ResultEnum.END);
+        }
+
+        //判断库存是否充足
         if(Objects.equals(null,miaoshaGoodsVO) || Objects.equals(0,miaoshaGoodsVO.getStockCount())){
             throw new GlobalException(ResultEnum.MIAO_SHA_OVER);
         }

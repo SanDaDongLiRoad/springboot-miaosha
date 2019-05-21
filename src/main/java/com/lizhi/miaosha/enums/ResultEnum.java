@@ -31,6 +31,8 @@ public enum ResultEnum {
      */
     MIAO_SHA_OVER(2001,"商品已经秒杀完毕"),
     REPEATE_MIAOSHA(2002,"不能重复秒杀"),
+    NO_START(2003,"秒杀未开始"),
+    END(2004,"秒杀已结束"),
     ;
 
     /**
