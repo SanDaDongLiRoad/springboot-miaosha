@@ -55,14 +55,14 @@ public class MiaoshaServiceImpl implements MiaoshaService {
         orderInfo.setOrderChannel(1);
         orderInfo.setOrderStatus(0);
         orderInfo.setCreateDate(new Date());
-        Long orderId = orderService.saveOrderInfo(orderInfo);
+        orderService.saveOrderInfo(orderInfo);
 
         //3.生成秒杀订单
         MiaoshaOrder miaoshaOrder = new MiaoshaOrder();
         miaoshaOrder.setGoodsId(miaoshaGoodsVO.getGoodsId());
-        miaoshaOrder.setOrderId(orderId);
+        miaoshaOrder.setOrderId(orderInfo.getId());
         miaoshaOrder.setUserId(miaoshaUser.getId());
         miaoshaOrderService.saveMiaoshaOrder(miaoshaOrder);
-        return orderId;
+        return orderInfo.getId();
     }
 }
