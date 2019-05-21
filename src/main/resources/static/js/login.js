@@ -3,6 +3,8 @@ Login = {
     // 定义模块初始化方法
     init: function() {
         Login.bindEvent();
+        Login.hiddenClearLoginName();
+        Login.hiddenClearPassword();
     },
 
     // 定义事件绑定
@@ -26,7 +28,7 @@ Login = {
 
     //隐藏清空登录名叉号
     hiddenClearLoginName : function(){
-        if($(this).val().length == 0){
+        if($("#loginForm #loginName").val()==null || $("#loginForm #loginName").val()=="" || $("#loginForm #loginName").val().length == 0){
             $("#clear-loginName-btn").html("&nbsp;&nbsp;");
         }else{
             $("#clear-loginName-btn").html("×");
@@ -35,7 +37,7 @@ Login = {
 
     //隐藏清空密码叉号
     hiddenClearPassword : function(){
-        if($(this).val().length == 0){
+        if($("#loginForm #password").val()==null || $("#loginForm #password").val()=="" || $("#loginForm #password").val().length == 0){
             $("#clear-password-btn").html("&nbsp;&nbsp;");
         }else{
             $("#clear-password-btn").html("×");
