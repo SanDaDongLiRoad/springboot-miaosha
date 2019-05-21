@@ -18,7 +18,7 @@
                 </tr>
                 <tr th:each="miaoshaGoods,miaoshaGoodsStat : ${miaoshaGoodsVOList}">
                     <td th:text="${miaoshaGoods.goodsName}"></td>
-                    <td ><img th:src="@{${miaoshaGoods.goodsImg}}" width="100" height="100" /></td>
+                    <td ><img id="goods-img" th:src="@{${miaoshaGoods.goodsImg}}"/></td>
                     <td th:text="${miaoshaGoods.goodsPrice}"></td>
                     <td th:text="${miaoshaGoods.miaoshaPrice}"></td>
                     <td th:text="${miaoshaGoods.stockCount}"></td>
