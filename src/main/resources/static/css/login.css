@@ -7,11 +7,8 @@ body{
 .row{
     margin-top: 20px;
 }
-#reset-btn{
-    margin-left: 20px;
-}
 #login-btn{
-    margin-left: 80px;
+    width: 49%;
 }
 h2{
     margin-left: 10px;
