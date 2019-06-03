@@ -22,7 +22,8 @@
                     <td th:text="${miaoshaGoods.goodsPrice}"></td>
                     <td th:text="${miaoshaGoods.miaoshaPrice}"></td>
                     <td th:text="${miaoshaGoods.stockCount}"></td>
-                    <td><a th:href="'/miaoShaGoods/to_detail/'+${miaoshaGoods.goodsId}">详情</a></td>
+                    <!--<td><a th:href="'/miaoShaGoods/to_detail2/'+${miaoshaGoods.goodsId}">详情</a></td>-->
+                    <td><a th:href="'/goods_detail.htm?goodsId='+${miaoshaGoods.goodsId}">详情</a></td>
                  </tr>
             </table>
         </div>

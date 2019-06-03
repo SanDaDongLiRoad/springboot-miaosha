@@ -1,17 +1,25 @@
 package com.lizhi.miaosha.controller;
 
 import com.lizhi.miaosha.domain.MiaoshaUser;
+import com.lizhi.miaosha.redis.GoodsKey;
+import com.lizhi.miaosha.redis.JedisService;
 import com.lizhi.miaosha.service.MiaoshaGoodsService;
 import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.thymeleaf.spring4.context.SpringWebContext;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -22,10 +30,19 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("miaoShaGoods")
-public class MiaoShaGoodsController {
+public class MiaoShaGoodsController extends BaseController {
+
+    @Autowired
+    private JedisService jedisService;
 
     @Autowired
     private MiaoshaGoodsService miaoshaGoodsService;
+
+    @Autowired
+    private ThymeleafViewResolver thymeleafViewResolver;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * 跳转秒杀商品列表页
@@ -34,11 +51,11 @@ public class MiaoShaGoodsController {
      * @return
      */
     @GetMapping("to_list")
-    public String listMiaoShaGoods(Model model, MiaoshaUser miaoshaUser){
+    public String listMiaoShaGoods(HttpServletRequest request, HttpServletResponse response, Model model, MiaoshaUser miaoshaUser){
         model.addAttribute("miaoshaUser", miaoshaUser);
         List<MiaoshaGoodsVO> miaoshaGoodsVOList = miaoshaGoodsService.queryMiaoshaGoodsVOList();
         model.addAttribute("miaoshaGoodsVOList", miaoshaGoodsVOList);
-        return "goods_list";
+        return render(request, response, model, "goods_list", GoodsKey.getGoodsList, "");
     }
 
     /**
@@ -73,5 +90,54 @@ public class MiaoShaGoodsController {
         model.addAttribute("miaoshaStatus", miaoshaStatus);
         model.addAttribute("remainSeconds", remainSeconds);
         return "goods_detail";
+    }
+
+    /**
+     * 秒杀商品详情页（URL 缓存）
+     * @param model
+     * @param miaoshaUser
+     * @param goodsId
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value="to_detail2/{goodsId}",produces="text/html")
+    public String queryMiaoShaGoodsDetail2(HttpServletRequest request, HttpServletResponse response,
+                                           Model model, MiaoshaUser miaoshaUser, @PathVariable("goodsId") Long goodsId){
+        model.addAttribute("miaoshaUser", miaoshaUser);
+
+        //取缓存
+        String html = jedisService.get(GoodsKey.getGoodsDetail, ""+goodsId, String.class);
+        if(StringUtils.isNotEmpty(html)) {
+            return html;
+        }
+        //手动渲染
+        MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
+        model.addAttribute("miaoshaGoodsVO", miaoshaGoodsVO);
+
+        long startDate = miaoshaGoodsVO.getStartDate().getTime();
+        long endDate = miaoshaGoodsVO.getEndDate().getTime();
+        long now = System.currentTimeMillis();
+
+        int miaoshaStatus = 0;
+        int remainSeconds = 0;
+        //秒杀还没开始，倒计时
+        if(now < startDate ) {
+            miaoshaStatus = 0;
+            remainSeconds = (int)((startDate - now )/1000);
+        }else  if(now > endDate){
+            miaoshaStatus = 2;
+            remainSeconds = -1;
+        }else {
+            remainSeconds = 0;
+            miaoshaStatus = 1;
+        }
+        model.addAttribute("miaoshaStatus", miaoshaStatus);
+        model.addAttribute("remainSeconds", remainSeconds);
+        SpringWebContext ctx = new SpringWebContext(request,response,request.getServletContext(),request.getLocale(),model.asMap(),applicationContext);
+        html = thymeleafViewResolver.getTemplateEngine().process("goods_detail", ctx);
+        if(StringUtils.isNotEmpty(html)) {
+            jedisService.set(GoodsKey.getGoodsDetail, ""+goodsId, html);
+        }
+        return html;
     }
 }
