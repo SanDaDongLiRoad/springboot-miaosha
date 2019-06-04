@@ -4,7 +4,10 @@ import com.lizhi.miaosha.domain.MiaoshaUser;
 import com.lizhi.miaosha.redis.GoodsKey;
 import com.lizhi.miaosha.redis.JedisService;
 import com.lizhi.miaosha.service.MiaoshaGoodsService;
+import com.lizhi.miaosha.util.ResultUtil;
+import com.lizhi.miaosha.vo.GoodsDetailVO;
 import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
+import com.lizhi.miaosha.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +97,8 @@ public class MiaoShaGoodsController extends BaseController {
 
     /**
      * 秒杀商品详情页（URL 缓存）
+     * @param request
+     * @param response
      * @param model
      * @param miaoshaUser
      * @param goodsId
@@ -139,5 +144,40 @@ public class MiaoShaGoodsController extends BaseController {
             jedisService.set(GoodsKey.getGoodsDetail, ""+goodsId, html);
         }
         return html;
+    }
+
+    /**
+     * 秒杀商品详情页（页面静态化，后端只负责返回接口数据）
+     * @param miaoshaUser
+     * @param goodsId
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("to_detail3/{goodsId}")
+    public ResultVO<GoodsDetailVO> queryMiaoShaGoodsDetail3(MiaoshaUser miaoshaUser, @PathVariable("goodsId") Long goodsId){
+        MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
+        long startDate = miaoshaGoodsVO.getStartDate().getTime();
+        long endDate = miaoshaGoodsVO.getEndDate().getTime();
+        long now = System.currentTimeMillis();
+
+        //默认秒杀进行中
+        int miaoshaStatus = 1;
+        int remainSeconds = 0;
+
+        //秒杀还没开始，倒计时
+        if(now < startDate ) {
+            miaoshaStatus = 0;
+            remainSeconds = (int)((startDate - now )/1000);
+            //秒杀已经结束
+        }else if(now > endDate){
+            miaoshaStatus = 2;
+            remainSeconds = -1;
+        }
+        GoodsDetailVO goodsDetailVO = new GoodsDetailVO();
+        goodsDetailVO.setMiaoshaGoodsVO(miaoshaGoodsVO);
+        goodsDetailVO.setMiaoshaUser(miaoshaUser);
+        goodsDetailVO.setMiaoshaStatus(miaoshaStatus);
+        goodsDetailVO.setRemainSeconds(remainSeconds);
+        return ResultUtil.success(goodsDetailVO);
     }
 }

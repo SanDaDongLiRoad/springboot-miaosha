@@ -13,10 +13,7 @@ import com.lizhi.miaosha.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
@@ -76,5 +73,17 @@ public class MiaoshaController {
         //开始秒杀
         Long orderId = miaoshaService.miaosha(miaoshaUser,miaoshaGoodsVO);
         return ResultUtil.success(orderId);
+    }
+
+    /**
+     * 获取秒杀地址
+     * @param goodsId
+     * @param verifyCode
+     * @param user
+     * @return
+     */
+    @GetMapping("getMiaoShaPath")
+    public ResultVO<String> getMiaoShaPath(@RequestParam("goodsId")long goodsId,@RequestParam(value="verifyCode", defaultValue="0")int verifyCode,MiaoshaUser user){
+        return null;
     }
 }
