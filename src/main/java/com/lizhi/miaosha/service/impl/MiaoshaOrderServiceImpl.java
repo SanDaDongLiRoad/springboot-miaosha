@@ -4,6 +4,8 @@ import com.lizhi.miaosha.dao.MiaoshaOrderDao;
 import com.lizhi.miaosha.domain.MiaoshaOrder;
 import com.lizhi.miaosha.enums.ResultEnum;
 import com.lizhi.miaosha.exception.GlobalException;
+import com.lizhi.miaosha.redis.JedisService;
+import com.lizhi.miaosha.redis.OrderKey;
 import com.lizhi.miaosha.service.MiaoshaOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ import java.util.Objects;
 public class MiaoshaOrderServiceImpl implements MiaoshaOrderService {
 
     @Autowired
+    private JedisService jedisService;
+
+    @Autowired
     private MiaoshaOrderDao miaoshaOrderDao;
 
     @Override
@@ -34,7 +39,8 @@ public class MiaoshaOrderServiceImpl implements MiaoshaOrderService {
         if(Objects.equals(null,goodsId)){
             throw new GlobalException(ResultEnum.SERVICE_PARAM_ERROR.fillArgs("商品goodsId为空"));
         }
-        MiaoshaOrder miaoshaOrder = miaoshaOrderDao.queryByUserIdAndGoodsId(userId,goodsId);
+//        MiaoshaOrder miaoshaOrder = miaoshaOrderDao.queryByUserIdAndGoodsId(userId,goodsId);
+        MiaoshaOrder miaoshaOrder = jedisService.get(OrderKey.getMiaoshaOrderByUidGid, ""+userId+"_"+goodsId, MiaoshaOrder.class);
         log.info("queryByUserIdAndGoodsId result miaoshaOrder is: {}",miaoshaOrder);
         return miaoshaOrder;
     }

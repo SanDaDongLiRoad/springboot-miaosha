@@ -3,10 +3,15 @@ package com.lizhi.miaosha.service.impl;
 import com.lizhi.miaosha.domain.MiaoshaOrder;
 import com.lizhi.miaosha.domain.MiaoshaUser;
 import com.lizhi.miaosha.domain.OrderInfo;
+import com.lizhi.miaosha.redis.JedisService;
+import com.lizhi.miaosha.redis.MiaoshaKey;
+import com.lizhi.miaosha.redis.OrderKey;
 import com.lizhi.miaosha.service.MiaoshaGoodsService;
 import com.lizhi.miaosha.service.MiaoshaOrderService;
 import com.lizhi.miaosha.service.MiaoshaService;
 import com.lizhi.miaosha.service.OrderInfoService;
+import com.lizhi.miaosha.util.MD5Util;
+import com.lizhi.miaosha.util.UUIDUtil;
 import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +30,9 @@ import java.util.Date;
 @Slf4j
 @Service
 public class MiaoshaServiceImpl implements MiaoshaService {
+
+    @Autowired
+    private JedisService jedisService;
 
     @Autowired
     private MiaoshaGoodsService miaoshaGoodsService;
@@ -63,6 +71,18 @@ public class MiaoshaServiceImpl implements MiaoshaService {
         miaoshaOrder.setOrderId(orderInfo.getId());
         miaoshaOrder.setUserId(miaoshaUser.getId());
         miaoshaOrderService.saveMiaoshaOrder(miaoshaOrder);
+
+        jedisService.set(OrderKey.getMiaoshaOrderByUidGid, ""+miaoshaUser.getId()+"_"+miaoshaGoodsVO.getGoodsId(), miaoshaOrder);
         return orderInfo.getId();
+    }
+
+    @Override
+    public String createMiaoshaPath(MiaoshaUser miaoshaUser, long goodsId) {
+        if(miaoshaUser == null || goodsId <=0) {
+            return null;
+        }
+        String miaoshaPath = MD5Util.md5(UUIDUtil.uuid()+"123456");
+        jedisService.set(MiaoshaKey.getMiaoshaPath, ""+miaoshaUser.getId() + "_"+ goodsId,miaoshaPath);
+        return miaoshaPath;
     }
 }

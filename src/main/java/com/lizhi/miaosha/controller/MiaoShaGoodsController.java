@@ -1,5 +1,6 @@
 package com.lizhi.miaosha.controller;
 
+import com.lizhi.miaosha.base.BaseController;
 import com.lizhi.miaosha.domain.MiaoshaUser;
 import com.lizhi.miaosha.redis.GoodsKey;
 import com.lizhi.miaosha.redis.JedisService;
@@ -8,7 +9,6 @@ import com.lizhi.miaosha.util.ResultUtil;
 import com.lizhi.miaosha.vo.GoodsDetailVO;
 import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
 import com.lizhi.miaosha.vo.ResultVO;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

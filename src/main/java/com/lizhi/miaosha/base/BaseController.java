@@ -1,4 +1,4 @@
-package com.lizhi.miaosha.controller;
+package com.lizhi.miaosha.base;
 
 import com.lizhi.miaosha.redis.JedisService;
 import com.lizhi.miaosha.redis.KeyPrefix;

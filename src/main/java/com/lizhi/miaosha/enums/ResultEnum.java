@@ -25,6 +25,7 @@ public enum ResultEnum {
      */
     MOBILE_NOT_EXIST(1001,"手机号不存在"),
     PASSWORD_ERROR(1002,"密码不正确"),
+    SESSION_ERROR(1003, "Session不存在或者已经失效"),
 
     /**
      * 秒杀相关状态码

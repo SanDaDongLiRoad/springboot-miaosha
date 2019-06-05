@@ -19,4 +19,12 @@ public interface MiaoshaService {
      * @return
      */
     Long miaosha(MiaoshaUser miaoshaUser, MiaoshaGoodsVO miaoshaGoodsVO);
+
+    /**
+     * 创建秒杀地址
+     * @param user
+     * @param goodsId
+     * @return
+     */
+    String createMiaoshaPath(MiaoshaUser user, long goodsId);
 }

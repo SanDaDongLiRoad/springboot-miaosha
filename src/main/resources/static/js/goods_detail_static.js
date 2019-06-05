@@ -10,16 +10,16 @@ GoodsDetailStatic = {
     bindEvent : function() {
 
         //获取秒杀地址
-        $("#goods-detail #buy-btn").on("click", GoodsDetailStatic.getMiaoshaPath());
+        $("#goods-detail #buy-btn").on("click", GoodsDetailStatic.getMiaoshaPath);
 
         //刷新验证码
-        $("#goods-detail #verifyCodeImg").on("click", GoodsDetailStatic.refreshVerifyCode());
+        $("#goods-detail #verifyCodeImg").on("click", GoodsDetailStatic.refreshVerifyCode);
     },
 
     getDetail : function(){
         var goodsId = Common.getQueryString("goodsId");
         $.ajax({
-            url:"/miaoShaGoods/detail3/"+goodsId,
+            url:"/miaoShaGoods/to_detail3/"+goodsId,
             type:"GET",
             success:function(data){
                 if(data.code == 0){
@@ -51,7 +51,7 @@ GoodsDetailStatic = {
         GoodsDetailStatic.countDown();
     },
 
-    countDown : function (){
+    countDown : function(){
         var remainSeconds = $("#remainSeconds").val();
         var timeout;
         if(remainSeconds > 0){//秒杀还没开始，倒计时
@@ -68,14 +68,14 @@ GoodsDetailStatic = {
                 clearTimeout(timeout);
             }
             $("#miaoshaTip").html("秒杀进行中");
-            $("#verifyCodeImg").attr("src", "/miaosha/verifyCode?goodsId="+$("#goodsId").val());
-            $("#verifyCodeImg").show();
-            $("#verifyCode").show();
+            // $("#verifyCodeImg").attr("src", "/miaosha/verifyCode?goodsId="+$("#goodsId").val());
+            // $("#verifyCodeImg").show();
+            // $("#verifyCode").show();
         }else{//秒杀已经结束
             $("#goods-detail #buy-btn").attr("disabled", true);
             $("#miaoshaTip").html("秒杀已经结束");
-            $("#verifyCodeImg").hide();
-            $("#verifyCode").hide();
+            // $("#verifyCodeImg").hide();
+            // $("#verifyCode").hide();
         }
     },
 
@@ -105,15 +105,15 @@ GoodsDetailStatic = {
 
     doMiaosha : function (path){
         $.ajax({
-            url:"/miaosha/"+path+"/do_miaosha",
+            url:"/miaosha/do_miaosha",
             type:"POST",
             data:{
                 goodsId:$("#goodsId").val()
             },
             success:function(data){
                 if(data.code == 0){
-                    //window.location.href="/order_detail.htm?orderId="+data.data.id;
-                    getMiaoshaResult($("#goodsId").val());
+                    window.location.href="/order_detail.htm?orderId="+data.data;
+                    // GoodsDetailStatic.getMiaoshaResult($("#goodsId").val());
                 }else{
                     layer.msg(data.msg);
                 }
@@ -124,8 +124,8 @@ GoodsDetailStatic = {
         });
     },
 
-    getMiaoshaResult : function (goodsId){
-        g_showLoading();
+    getMiaoshaResult : function(goodsId){
+        Common.showLoading();
         $.ajax({
             url:"/miaosha/result",
             type:"GET",
@@ -139,7 +139,7 @@ GoodsDetailStatic = {
                         layer.msg("对不起，秒杀失败");
                     }else if(result == 0){//继续轮询
                         setTimeout(function(){
-                            getMiaoshaResult(goodsId);
+                            GoodsDetailStatic.getMiaoshaResult(goodsId);
                         }, 200);
                     }else{
                         layer.confirm("恭喜你，秒杀成功！查看订单？", {btn:["确定","取消"]},
@@ -159,6 +159,7 @@ GoodsDetailStatic = {
             }
         });
     },
+
     refreshVerifyCode : function (){
         $("#verifyCodeImg").attr("src", "/miaosha/verifyCode?goodsId="+$("#goodsId").val()+"&timestamp="+new Date().getTime());
     }

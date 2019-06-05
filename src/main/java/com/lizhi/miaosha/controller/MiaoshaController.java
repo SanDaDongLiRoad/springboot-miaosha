@@ -82,8 +82,14 @@ public class MiaoshaController {
      * @param user
      * @return
      */
+    @ResponseBody
     @GetMapping("getMiaoShaPath")
-    public ResultVO<String> getMiaoShaPath(@RequestParam("goodsId")long goodsId,@RequestParam(value="verifyCode", defaultValue="0")int verifyCode,MiaoshaUser user){
-        return null;
+    public ResultVO<String> getMiaoShaPath(@RequestParam("goodsId")long goodsId,
+                                           @RequestParam(value="verifyCode", defaultValue="0")int verifyCode,MiaoshaUser user){
+        if(user == null) {
+            return ResultUtil.error(ResultEnum.SESSION_ERROR);
+        }
+        String miaoShaPath  =miaoshaService.createMiaoshaPath(user, goodsId);
+        return ResultUtil.success(miaoShaPath);
     }
 }
