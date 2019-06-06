@@ -4,6 +4,8 @@ import com.lizhi.miaosha.domain.MiaoshaUser;
 import com.lizhi.miaosha.domain.OrderInfo;
 import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
 
+import java.awt.image.BufferedImage;
+
 /**
  * 秒杀业务类
  *
@@ -27,4 +29,12 @@ public interface MiaoshaService {
      * @return
      */
     String createMiaoshaPath(MiaoshaUser user, long goodsId);
+
+    /**
+     * 创建秒杀验证码
+     * @param user
+     * @param goodsId
+     * @return
+     */
+    BufferedImage createVerifyCode(MiaoshaUser user, long goodsId);
 }

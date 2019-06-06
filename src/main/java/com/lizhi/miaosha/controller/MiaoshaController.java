@@ -15,6 +15,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Objects;
 
 /**
@@ -91,5 +96,23 @@ public class MiaoshaController {
         }
         String miaoShaPath  =miaoshaService.createMiaoshaPath(user, goodsId);
         return ResultUtil.success(miaoShaPath);
+    }
+
+    /**
+     * 获取秒杀验证码
+     * @param goodsId
+     * @param response
+     * @param user
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("getMiaoshaVerifyCod")
+    public void getMiaoshaVerifyCod(@RequestParam("goodsId")long goodsId,HttpServletResponse response,MiaoshaUser user) throws IOException {
+
+            BufferedImage image  = miaoshaService.createVerifyCode(user, goodsId);
+            OutputStream out = response.getOutputStream();
+            ImageIO.write(image, "JPEG", out);
+            out.flush();
+            out.close();
     }
 }

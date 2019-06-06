@@ -18,7 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Date;
+import java.util.Random;
 
 
 /**
@@ -84,5 +87,14 @@ public class MiaoshaServiceImpl implements MiaoshaService {
         String miaoshaPath = MD5Util.md5(UUIDUtil.uuid()+"123456");
         jedisService.set(MiaoshaKey.getMiaoshaPath, ""+miaoshaUser.getId() + "_"+ goodsId,miaoshaPath);
         return miaoshaPath;
+    }
+
+    @Override
+    public BufferedImage createVerifyCode(MiaoshaUser user, long goodsId) {
+
+//        redisService.set(MiaoshaKey.getMiaoshaVerifyCode, user.getId()+","+goodsId, rnd);
+//        //输出图片
+//        return bufferedImage;
+        return null;
     }
 }
