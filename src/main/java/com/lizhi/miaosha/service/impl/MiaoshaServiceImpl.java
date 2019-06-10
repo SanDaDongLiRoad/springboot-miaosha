@@ -113,4 +113,18 @@ public class MiaoshaServiceImpl implements MiaoshaService {
         String cacheMiaoShaPath = jedisService.get(MiaoshaKey.getMiaoshaPath, ""+miaoshaUser.getId() + "_"+ goodsId, String.class);
         return Objects.equals(miaoShaPath,cacheMiaoShaPath);
     }
+
+    @Override
+    public Boolean checkVerifyCode(MiaoshaUser miaoshaUser, long goodsId, int verifyCode) {
+        //校验有待优化
+        if(miaoshaUser == null || goodsId <=0) {
+            return false;
+        }
+        Integer cacheVerifyCode = jedisService.get(MiaoshaKey.getMiaoshaVerifyCode, miaoshaUser.getId()+","+goodsId, Integer.class);
+        if(Objects.equals(cacheVerifyCode,null) || !Objects.equals(cacheVerifyCode - verifyCode,0)) {
+            return false;
+        }
+        jedisService.delete(MiaoshaKey.getMiaoshaVerifyCode, miaoshaUser.getId()+","+goodsId);
+        return true;
+    }
 }

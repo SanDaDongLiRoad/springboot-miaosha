@@ -45,4 +45,13 @@ public interface MiaoshaService {
      * @return
      */
     Boolean checkMiaoShaPath(MiaoshaUser user, long goodsId,String miaoShaPath);
+
+    /**
+     * 校验验证码
+     * @param user
+     * @param goodsId
+     * @param verifyCode
+     * @return
+     */
+    Boolean checkVerifyCode(MiaoshaUser user, long goodsId,int verifyCode);
 }
