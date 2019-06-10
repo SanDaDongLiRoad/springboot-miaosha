@@ -19,6 +19,7 @@ public enum ResultEnum {
     CONTROLLER_PARAM_ERROR(1, "控制层参数校验异常：%s"),
     SERVICE_PARAM_ERROR(2, "业务层参数校验异常：%s"),
     NO_EXIST(3,"该条数据不存在"),
+    ACCESS_LIMIT_REACHED(4, "访问太频繁!"),
 
     /**
      * 登录相关状态码
