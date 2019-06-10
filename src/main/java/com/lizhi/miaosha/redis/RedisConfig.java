@@ -1,4 +1,4 @@
-package com.lizhi.miaosha.config;
+package com.lizhi.miaosha.redis;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

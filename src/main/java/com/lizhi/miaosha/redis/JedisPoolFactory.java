@@ -1,6 +1,5 @@
-package com.lizhi.miaosha.bean;
+package com.lizhi.miaosha.redis;
 
-import com.lizhi.miaosha.config.RedisConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
