@@ -3,6 +3,7 @@ package com.lizhi.miaosha.service.impl;
 import com.lizhi.miaosha.domain.MiaoshaOrder;
 import com.lizhi.miaosha.domain.MiaoshaUser;
 import com.lizhi.miaosha.domain.OrderInfo;
+import com.lizhi.miaosha.dto.VerifyCodeDTO;
 import com.lizhi.miaosha.redis.JedisService;
 import com.lizhi.miaosha.redis.MiaoshaKey;
 import com.lizhi.miaosha.redis.OrderKey;
@@ -12,6 +13,7 @@ import com.lizhi.miaosha.service.MiaoshaService;
 import com.lizhi.miaosha.service.OrderInfoService;
 import com.lizhi.miaosha.util.MD5Util;
 import com.lizhi.miaosha.util.UUIDUtil;
+import com.lizhi.miaosha.util.VerifyCodeUtil;
 import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Random;
 
 
@@ -81,6 +84,7 @@ public class MiaoshaServiceImpl implements MiaoshaService {
 
     @Override
     public String createMiaoshaPath(MiaoshaUser miaoshaUser, long goodsId) {
+        //校验有待优化
         if(miaoshaUser == null || goodsId <=0) {
             return null;
         }
@@ -90,11 +94,37 @@ public class MiaoshaServiceImpl implements MiaoshaService {
     }
 
     @Override
-    public BufferedImage createVerifyCode(MiaoshaUser user, long goodsId) {
+    public BufferedImage createVerifyCode(MiaoshaUser miaoshaUser, long goodsId) {
 
-//        redisService.set(MiaoshaKey.getMiaoshaVerifyCode, user.getId()+","+goodsId, rnd);
-//        //输出图片
-//        return bufferedImage;
-        return null;
+        VerifyCodeDTO verifyCodeDTO = VerifyCodeUtil.createVerifyCode();
+
+        //保存验证码结果到Redis
+        jedisService.set(MiaoshaKey.getMiaoshaVerifyCode, miaoshaUser.getId()+","+goodsId, verifyCodeDTO.getVerifyCodeResult());
+        //输出图片
+        return verifyCodeDTO.getBufferedImage();
+    }
+
+    @Override
+    public Boolean checkMiaoShaPath(MiaoshaUser miaoshaUser, long goodsId, String miaoShaPath) {
+        //校验有待优化
+        if(miaoshaUser == null || miaoShaPath == null) {
+            return false;
+        }
+        String cacheMiaoShaPath = jedisService.get(MiaoshaKey.getMiaoshaPath, ""+miaoshaUser.getId() + "_"+ goodsId, String.class);
+        return Objects.equals(miaoShaPath,cacheMiaoShaPath);
+    }
+
+    @Override
+    public Boolean checkVerifyCode(MiaoshaUser miaoshaUser, long goodsId, int verifyCode) {
+        //校验有待优化
+        if(miaoshaUser == null || goodsId <=0) {
+            return false;
+        }
+        Integer cacheVerifyCode = jedisService.get(MiaoshaKey.getMiaoshaVerifyCode, miaoshaUser.getId()+","+goodsId, Integer.class);
+        if(Objects.equals(cacheVerifyCode,null) || !Objects.equals(cacheVerifyCode - verifyCode,0)) {
+            return false;
+        }
+        jedisService.delete(MiaoshaKey.getMiaoshaVerifyCode, miaoshaUser.getId()+","+goodsId);
+        return true;
     }
 }

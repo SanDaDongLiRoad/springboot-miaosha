@@ -1,7 +1,6 @@
 package com.lizhi.miaosha.service;
 
 import com.lizhi.miaosha.domain.MiaoshaUser;
-import com.lizhi.miaosha.domain.OrderInfo;
 import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
 
 import java.awt.image.BufferedImage;
@@ -37,4 +36,22 @@ public interface MiaoshaService {
      * @return
      */
     BufferedImage createVerifyCode(MiaoshaUser user, long goodsId);
+
+    /**
+     * 校验秒杀路径
+     * @param user
+     * @param goodsId
+     * @param miaoShaPath
+     * @return
+     */
+    Boolean checkMiaoShaPath(MiaoshaUser user, long goodsId,String miaoShaPath);
+
+    /**
+     * 校验验证码
+     * @param user
+     * @param goodsId
+     * @param verifyCode
+     * @return
+     */
+    Boolean checkVerifyCode(MiaoshaUser user, long goodsId,int verifyCode);
 }

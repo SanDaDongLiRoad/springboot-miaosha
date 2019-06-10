@@ -1,7 +1,10 @@
 package com.lizhi.miaosha.util;
 
+import com.lizhi.miaosha.dto.VerifyCodeDTO;
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
@@ -14,7 +17,15 @@ import java.util.Random;
  */
 public class VerifyCodeUtil {
 
-    public static BufferedImage createVerifyCode(){
+    /**
+     * 操作符数组
+     */
+    private static char[] operators = new char[] {'+', '-', '*'};
+
+    public static VerifyCodeDTO createVerifyCode(){
+
+        VerifyCodeDTO verifyCodeDTO = new VerifyCodeDTO();
+
         int width = 80;
         int height = 32;
         //create the image
@@ -34,42 +45,45 @@ public class VerifyCodeUtil {
             int y = random.nextInt(height);
             graphics.drawOval(x, y, 0, 0);
         }
-        // generate a random code
-        String verifyCode = generateVerifyCode(random);
+        // 生成计算公式
+        String formula = generateFormula(random);
         graphics.setColor(new Color(0, 100, 0));
         graphics.setFont(new Font("Candara", Font.BOLD, 24));
-        graphics.drawString(verifyCode, 8, 24);
+        graphics.drawString(formula, 8, 24);
         graphics.dispose();
-        //把验证码存到redis中
-        int rnd = calc(verifyCode);
-
-        return bufferedImage;
+        verifyCodeDTO.setBufferedImage(bufferedImage);
+        verifyCodeDTO.setVerifyCodeResult(calculateResult(formula));
+        return verifyCodeDTO;
     }
 
+    /**
+     * 生成字符串格式的计算公式
+     * @param random
+     * @return
+     */
+    private static String generateFormula(Random random) {
+        int firstNumber = random.nextInt(10);
+        int secondNumber = random.nextInt(10);
+        int thirdNumber  = random.nextInt(10);
+        char firstOperator = operators[random.nextInt(3)];
+        char secondOperator = operators[random.nextInt(3)];
+        String formula = ""+ firstNumber + firstOperator + secondNumber + secondOperator + thirdNumber;
+        return formula;
+    }
 
-
-    private static int calc(String exp) {
+    /**
+     * 计算验证码上的公式并返回结果
+     * @param formula
+     * @return
+     */
+    private static int calculateResult(String formula) {
         try {
-            ScriptEngineManager manager = new ScriptEngineManager();
-            ScriptEngine engine = manager.getEngineByName("JavaScript");
-            return (Integer)engine.eval(exp);
-        }catch(Exception e) {
+            ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+            ScriptEngine scriptEngine = scriptEngineManager.getEngineByName("JavaScript");
+            return (Integer)scriptEngine.eval(formula);
+        }catch(ScriptException e) {
             e.printStackTrace();
             return 0;
         }
-    }
-
-    private static char[] ops = new char[] {'+', '-', '*'};
-    /**
-     * + - *
-     * */
-    private static String generateVerifyCode(Random rdm) {
-        int num1 = rdm.nextInt(10);
-        int num2 = rdm.nextInt(10);
-        int num3 = rdm.nextInt(10);
-        char op1 = ops[rdm.nextInt(3)];
-        char op2 = ops[rdm.nextInt(3)];
-        String exp = ""+ num1 + op1 + num2 + op2 + num3;
-        return exp;
     }
 }

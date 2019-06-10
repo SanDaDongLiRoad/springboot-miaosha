@@ -91,9 +91,6 @@ public class MiaoshaController {
     @GetMapping("getMiaoShaPath")
     public ResultVO<String> getMiaoShaPath(@RequestParam("goodsId")long goodsId,
                                            @RequestParam(value="verifyCode", defaultValue="0")int verifyCode,MiaoshaUser user){
-        if(user == null) {
-            return ResultUtil.error(ResultEnum.SESSION_ERROR);
-        }
         String miaoShaPath  =miaoshaService.createMiaoshaPath(user, goodsId);
         return ResultUtil.success(miaoShaPath);
     }
@@ -106,13 +103,14 @@ public class MiaoshaController {
      * @return
      */
     @ResponseBody
-    @GetMapping("getMiaoshaVerifyCod")
-    public void getMiaoshaVerifyCod(@RequestParam("goodsId")long goodsId,HttpServletResponse response,MiaoshaUser user) throws IOException {
+    @GetMapping("getMiaoshaVerifyCode")
+    public void getMiaoshaVerifyCode(@RequestParam("goodsId")long goodsId,HttpServletResponse response,MiaoshaUser user){
 
-            BufferedImage image  = miaoshaService.createVerifyCode(user, goodsId);
-            OutputStream out = response.getOutputStream();
+        BufferedImage image  = miaoshaService.createVerifyCode(user, goodsId);
+        try (OutputStream out = response.getOutputStream()) {
             ImageIO.write(image, "JPEG", out);
-            out.flush();
-            out.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 }
