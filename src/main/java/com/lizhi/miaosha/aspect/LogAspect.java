@@ -8,6 +8,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 /**
  * 打印日志
@@ -51,6 +52,8 @@ public class LogAspect {
 
     @AfterReturning(returning = "object", pointcut = "log()")
     public void doAfterReturning(Object object) {
-        log.info("response={}", object.toString());
+        if(!Objects.equals(null,object)) {
+            log.info("response={}", object.toString());
+        }
     }
 }
