@@ -1,6 +1,7 @@
 package com.lizhi.miaosha.rabbitmq;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,4 +13,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class MQReceiver {
+
+    @RabbitListener(queues = MQConfig.QUEUE)
+    public void receive(String message){
+        log.info("receive message:"+message);
+    }
 }
