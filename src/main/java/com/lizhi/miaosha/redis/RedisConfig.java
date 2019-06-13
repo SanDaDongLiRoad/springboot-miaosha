@@ -13,17 +13,14 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-@ConfigurationProperties(prefix = "spring.redis")
+@ConfigurationProperties(prefix = "redis")
 public class RedisConfig {
 
     private String host;
     private int port;
     private int timeout;
     private String password;
-    @Value("${spring.redis.pool.max-active}")
     private int poolMaxTotal;
-    @Value("${spring.redis.pool.max-idle}")
     private int poolMaxIdle;
-    @Value("${spring.redis.pool.max-wait}")
     private int poolMaxWait;
 }
