@@ -28,7 +28,9 @@ public class DemoController {
     @ResponseBody
     @GetMapping("testMQ")
     public ResultVO<String> testMQ() {
-        sender.send("hello,imooc");
+//        sender.send("hello,imooc");
+//        sender.sendTopic("hello,imooc徐立志");
+        sender.sendHeader("hello,imooc徐立志");
         return ResultUtil.success("Hello，world");
     }
 
