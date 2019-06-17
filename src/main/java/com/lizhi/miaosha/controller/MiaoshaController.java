@@ -4,12 +4,19 @@ import com.lizhi.miaosha.domain.MiaoshaOrder;
 import com.lizhi.miaosha.domain.MiaoshaUser;
 import com.lizhi.miaosha.enums.ResultEnum;
 import com.lizhi.miaosha.exception.GlobalException;
+import com.lizhi.miaosha.rabbitmq.MQSender;
+import com.lizhi.miaosha.rabbitmq.MiaoshaMessage;
+import com.lizhi.miaosha.redis.GoodsKey;
+import com.lizhi.miaosha.redis.JedisService;
+import com.lizhi.miaosha.redis.MiaoshaKey;
 import com.lizhi.miaosha.service.MiaoshaGoodsService;
 import com.lizhi.miaosha.service.MiaoshaOrderService;
 import com.lizhi.miaosha.service.MiaoshaService;
 import com.lizhi.miaosha.util.ResultUtil;
 import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
 import com.lizhi.miaosha.vo.ResultVO;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -28,9 +36,13 @@ import java.util.Objects;
  * @author xulizhi-lenovo
  * @date 2019/5/20
  */
+@Slf4j
 @Controller
 @RequestMapping("miaosha")
-public class MiaoshaController {
+public class MiaoshaController implements InitializingBean {
+
+    @Autowired
+    private JedisService jedisService;
 
     @Autowired
     private MiaoshaService miaoshaService;
@@ -40,6 +52,25 @@ public class MiaoshaController {
 
     @Autowired
     private MiaoshaOrderService miaoshaOrderService;
+
+    @Autowired
+    private MQSender sender;
+
+    /**
+     * 初始化秒杀商品库存到Redis
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        log.info("初始化秒杀商品库存到Redis");
+        List<MiaoshaGoodsVO> miaoshaGoodsVOList = miaoshaGoodsService.queryMiaoshaGoodsVOList();
+        if(!Objects.equals(null,miaoshaGoodsVOList) && (miaoshaGoodsVOList.size() > 0)){
+            for(int i=0;i< miaoshaGoodsVOList.size();i++){
+                MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsVOList.get(i);
+                jedisService.set(GoodsKey.getMiaoshaGoodsStock,String.valueOf(miaoshaGoodsVO.getGoodsId()),miaoshaGoodsVO.getStockCount());
+            }
+        }
+    }
 
     /**
      * 执行秒杀
@@ -67,7 +98,7 @@ public class MiaoshaController {
 
         //判断库存是否充足
         if(Objects.equals(null,miaoshaGoodsVO) || Objects.equals(0,miaoshaGoodsVO.getStockCount())){
-            throw new GlobalException(ResultEnum.MIAO_SHA_OVER);
+            throw new GlobalException(ResultEnum.MIAOSHA_OVER);
         }
 
         //判断用户是否已经秒杀过
@@ -78,6 +109,38 @@ public class MiaoshaController {
         //开始秒杀
         Long orderId = miaoshaService.miaosha(miaoshaUser,miaoshaGoodsVO);
         return ResultUtil.success(orderId);
+    }
+
+    /**
+     * 执行秒杀 (使用消息队列RabbitMQ)
+     * @param model
+     * @param miaoshaUser
+     * @param goodsId
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("do_miaosha2")
+    public ResultVO<Long> miaosha2(Model model, MiaoshaUser miaoshaUser, @RequestParam("goodsId")Long goodsId){
+        model.addAttribute("miaoshaUser", miaoshaUser);
+
+        //预减库存
+        long stock = jedisService.decr(GoodsKey.getMiaoshaGoodsStock, ""+goodsId);
+        if(stock < 0) {
+            jedisService.set(MiaoshaKey.isGoodsOver, ""+goodsId, true);
+            return ResultUtil.error(ResultEnum.MIAOSHA_OVER);
+        }
+        //判断是否已经秒杀到了
+        MiaoshaOrder miaoshaOrder = miaoshaOrderService.queryByUserIdAndGoodsId(miaoshaUser.getId(),goodsId);
+        if(!Objects.equals(null,miaoshaOrder)) {
+            return ResultUtil.error(ResultEnum.REPEATE_MIAOSHA);
+        }
+        //入队
+        MiaoshaMessage miaoshaMessage = new MiaoshaMessage();
+        miaoshaMessage.setMiaoshaUser(miaoshaUser);
+        miaoshaMessage.setGoodsId(goodsId);
+        sender.sendMiaoshaMessage(miaoshaMessage);
+        //排队中
+        return ResultUtil.error(ResultEnum.WAIT_IN_LINE);
     }
 
     /**
@@ -112,5 +175,18 @@ public class MiaoshaController {
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * 查询秒杀结果
+     * @param goodsId
+     * @param user
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("getMiaoshaResult")
+    public ResultVO<Long> getMiaoshaResult(@RequestParam("goodsId")long goodsId,Model model,MiaoshaUser user){
+        model.addAttribute("user", user);
+        return miaoshaService.getMiaoshaResult(goodsId,user.getId());
     }
 }

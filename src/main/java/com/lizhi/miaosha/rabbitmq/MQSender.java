@@ -49,4 +49,14 @@ public class MQSender {
 		Message obj = new Message(msg.getBytes(), properties);
 		amqpTemplate.convertAndSend(MQConfig.HEADERS_EXCHANGE, "", obj);
 	}
+
+    /**
+     * 秒杀消息入队
+     * @param message
+     */
+	public void sendMiaoshaMessage(Object message){
+        String msg = CommonConvert.beanToString(message);
+        log.info("sendMiaoshaMessage message:"+msg);
+        amqpTemplate.convertAndSend(MQConfig.MIAOSHA_MESSAGE,msg);
+    }
 }

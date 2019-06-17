@@ -1,7 +1,9 @@
 package com.lizhi.miaosha.service;
 
 import com.lizhi.miaosha.domain.MiaoshaUser;
+import com.lizhi.miaosha.enums.ResultEnum;
 import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
+import com.lizhi.miaosha.vo.ResultVO;
 
 import java.awt.image.BufferedImage;
 
@@ -54,4 +56,12 @@ public interface MiaoshaService {
      * @return
      */
     Boolean checkVerifyCode(MiaoshaUser user, long goodsId,int verifyCode);
+
+    /**
+     * 获取秒杀结果
+     * @param goodsId
+     * @param miaoshaUserId
+     * @return
+     */
+    ResultVO<Long> getMiaoshaResult(long goodsId, Long miaoshaUserId);
 }

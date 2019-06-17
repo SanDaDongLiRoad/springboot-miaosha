@@ -40,4 +40,14 @@ public class ResultUtil {
         ResultVO<T> result = new ResultVO<T>(resultEnum.getCode(),resultEnum.getMsg(),null);
         return result;
     }
+
+    /**
+     * 失败时候的调用
+     * @param resultEnum
+     * @return
+     */
+    public static <T> ResultVO<T> error(ResultEnum resultEnum,T object){
+        ResultVO<T> result = new ResultVO<T>(resultEnum.getCode(),resultEnum.getMsg(),object);
+        return result;
+    }
 }

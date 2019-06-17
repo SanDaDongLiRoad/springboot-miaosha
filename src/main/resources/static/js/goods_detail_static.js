@@ -105,15 +105,15 @@ GoodsDetailStatic = {
 
     doMiaosha : function (path){
         $.ajax({
-            url:"/miaosha/do_miaosha",
+            url:"/miaosha/do_miaosha2",
             type:"POST",
             data:{
                 goodsId:$("#goodsId").val()
             },
             success:function(data){
                 if(data.code == 0){
-                    window.location.href="/order_detail.htm?orderId="+data.data;
-                    // GoodsDetailStatic.getMiaoshaResult($("#goodsId").val());
+                    // window.location.href="/order_detail.htm?orderId="+data.data;
+                    GoodsDetailStatic.getMiaoshaResult($("#goodsId").val());
                 }else{
                     layer.msg(data.msg);
                 }
@@ -133,24 +133,22 @@ GoodsDetailStatic = {
                 goodsId:$("#goodsId").val(),
             },
             success:function(data){
-                if(data.code == 0){
-                    var result = data.data;
-                    if(result < 0){
-                        layer.msg("对不起，秒杀失败");
-                    }else if(result == 0){//继续轮询
-                        setTimeout(function(){
-                            GoodsDetailStatic.getMiaoshaResult(goodsId);
-                        }, 200);
-                    }else{
-                        layer.confirm("恭喜你，秒杀成功！查看订单？", {btn:["确定","取消"]},
-                            function(){
-                                window.location.href="/order_detail.htm?orderId="+result;
-                            },
-                            function(){
-                                layer.closeAll();
-                            });
-                    }
-                }else{
+                if(data.code == 2000){
+                    layer.confirm("恭喜你，秒杀成功！查看订单？", {btn:["确定","取消"]},
+                    function(){
+                        window.location.href="/order_detail.htm?orderId="+data.data;
+                    },
+                    function(){
+                        layer.closeAll();
+                    });
+                }else if(data.code == 2001){//秒杀失败
+                    layer.msg(data.msg);
+                }else if(data.code == 2005){//继续轮询
+                    setTimeout(function(){
+                        GoodsDetailStatic.getMiaoshaResult(goodsId);
+                    }, 200);
+                }
+                else{
                     layer.msg(data.msg);
                 }
             },

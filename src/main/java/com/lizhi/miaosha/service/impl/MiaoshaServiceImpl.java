@@ -4,6 +4,7 @@ import com.lizhi.miaosha.domain.MiaoshaOrder;
 import com.lizhi.miaosha.domain.MiaoshaUser;
 import com.lizhi.miaosha.domain.OrderInfo;
 import com.lizhi.miaosha.dto.VerifyCodeDTO;
+import com.lizhi.miaosha.enums.ResultEnum;
 import com.lizhi.miaosha.redis.JedisService;
 import com.lizhi.miaosha.redis.MiaoshaKey;
 import com.lizhi.miaosha.redis.OrderKey;
@@ -12,9 +13,11 @@ import com.lizhi.miaosha.service.MiaoshaOrderService;
 import com.lizhi.miaosha.service.MiaoshaService;
 import com.lizhi.miaosha.service.OrderInfoService;
 import com.lizhi.miaosha.util.MD5Util;
+import com.lizhi.miaosha.util.ResultUtil;
 import com.lizhi.miaosha.util.UUIDUtil;
 import com.lizhi.miaosha.util.VerifyCodeUtil;
 import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
+import com.lizhi.miaosha.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +60,11 @@ public class MiaoshaServiceImpl implements MiaoshaService {
         //开始秒杀
         //1.减库存
         boolean reduceStockFlag = miaoshaGoodsService.reduceStock(miaoshaGoodsVO.getGoodsId());
+
+        if(!reduceStockFlag){
+            jedisService.set(MiaoshaKey.isGoodsOver, ""+miaoshaGoodsVO.getGoodsId(), true);
+            return null;
+        }
 
         //2.生成订单
         OrderInfo orderInfo = new OrderInfo();
@@ -126,5 +134,25 @@ public class MiaoshaServiceImpl implements MiaoshaService {
         }
         jedisService.delete(MiaoshaKey.getMiaoshaVerifyCode, miaoshaUser.getId()+","+goodsId);
         return true;
+    }
+
+    @Override
+    public ResultVO<Long> getMiaoshaResult(long goodsId, Long miaoshaUserId) {
+        MiaoshaOrder miaoshaOrder = miaoshaOrderService.queryByUserIdAndGoodsId(miaoshaUserId,goodsId);
+
+        //秒杀成功
+        if(!Objects.equals(null,miaoshaOrder)){
+            return ResultUtil.error(ResultEnum.MIAOSHA_SUCCESS,miaoshaOrder.getOrderId());
+        }
+
+        //商品秒杀结束标志
+        boolean miaoshaOverFlag = jedisService.exists(MiaoshaKey.isGoodsOver, ""+goodsId);
+
+        //秒杀已结束
+        if(miaoshaOverFlag){
+            return ResultUtil.error(ResultEnum.MIAOSHA_OVER);
+        }
+        //排队中
+        return ResultUtil.error(ResultEnum.WAIT_IN_LINE);
     }
 }

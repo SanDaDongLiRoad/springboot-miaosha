@@ -27,6 +27,11 @@ public class MQConfig {
 	public static final String HEADER_QUEUE = "header.queue";
 	public static final String HEADERS_EXCHANGE = "headersExchage";
 
+	/**
+	 * 秒杀队列
+	 */
+	public static final String MIAOSHA_MESSAGE = "MiaoshaMessage.queue";
+
     @Bean
     public Queue queue() {
         return new Queue(QUEUE, true);
@@ -91,5 +96,10 @@ public class MQConfig {
 		map.put("header1", "value1");
 		map.put("header2", "value2");
 		return BindingBuilder.bind(headerQueue1()).to(headersExchage()).whereAll(map).match();
+	}
+
+	@Bean
+	public Queue miaoshaMessageQueue(){
+		return new Queue(MIAOSHA_MESSAGE,true);
 	}
 }
