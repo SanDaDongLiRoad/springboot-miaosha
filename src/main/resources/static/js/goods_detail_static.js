@@ -127,7 +127,7 @@ GoodsDetailStatic = {
     getMiaoshaResult : function(goodsId){
         Common.showLoading();
         $.ajax({
-            url:"/miaosha/result",
+            url:"/miaosha/getMiaoshaResult",
             type:"GET",
             data:{
                 goodsId:$("#goodsId").val(),

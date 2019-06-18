@@ -120,7 +120,7 @@ public class MiaoshaController implements InitializingBean {
      */
     @ResponseBody
     @PostMapping("do_miaosha2")
-    public ResultVO<Long> miaosha2(Model model, MiaoshaUser miaoshaUser, @RequestParam("goodsId")Long goodsId){
+    public ResultVO miaosha2(Model model, MiaoshaUser miaoshaUser, @RequestParam("goodsId")Long goodsId){
         model.addAttribute("miaoshaUser", miaoshaUser);
 
         //预减库存

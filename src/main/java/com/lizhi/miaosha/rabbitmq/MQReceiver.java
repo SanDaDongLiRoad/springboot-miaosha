@@ -70,13 +70,13 @@ public class MQReceiver {
         //判断库存是否充足
         if(Objects.equals(null,miaoshaGoodsVO) || Objects.equals(0,miaoshaGoodsVO.getStockCount())){
             jedisService.set(MiaoshaKey.isGoodsOver, ""+goodsId, true);
-            throw new GlobalException(ResultEnum.MIAOSHA_OVER);
+            return;
         }
 
         //判断用户是否已经秒杀过
         MiaoshaOrder miaoshaOrder = miaoshaOrderService.queryByUserIdAndGoodsId(miaoshaUser.getId(),goodsId);
         if(!Objects.equals(null,miaoshaOrder)){
-            throw new GlobalException(ResultEnum.REPEATE_MIAOSHA);
+            return;
         }
         miaoshaService.miaosha(miaoshaMessage.getMiaoshaUser(),miaoshaGoodsVO);
     }
