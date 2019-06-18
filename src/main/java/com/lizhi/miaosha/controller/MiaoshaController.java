@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -56,6 +57,8 @@ public class MiaoshaController implements InitializingBean {
     @Autowired
     private MQSender sender;
 
+    private HashMap<Long, Boolean> localOverMap =  new HashMap<Long, Boolean>();
+
     /**
      * 初始化秒杀商品库存到Redis
      * @throws Exception
@@ -68,6 +71,7 @@ public class MiaoshaController implements InitializingBean {
             for(int i=0;i< miaoshaGoodsVOList.size();i++){
                 MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsVOList.get(i);
                 jedisService.set(GoodsKey.getMiaoshaGoodsStock,String.valueOf(miaoshaGoodsVO.getGoodsId()),miaoshaGoodsVO.getStockCount());
+                localOverMap.put(miaoshaGoodsVO.getGoodsId(), false);
             }
         }
     }
@@ -123,9 +127,16 @@ public class MiaoshaController implements InitializingBean {
     public ResultVO miaosha2(Model model, MiaoshaUser miaoshaUser, @RequestParam("goodsId")Long goodsId){
         model.addAttribute("miaoshaUser", miaoshaUser);
 
+        //内存标记，减少redis访问
+        boolean overFlag = localOverMap.get(goodsId);
+        if(overFlag) {
+            return ResultUtil.error(ResultEnum.MIAOSHA_OVER);
+        }
+
         //预减库存
         long stock = jedisService.decr(GoodsKey.getMiaoshaGoodsStock, ""+goodsId);
         if(stock < 0) {
+            localOverMap.put(goodsId, true);
             jedisService.set(MiaoshaKey.isGoodsOver, ""+goodsId, true);
             return ResultUtil.error(ResultEnum.MIAOSHA_OVER);
         }
