@@ -123,9 +123,16 @@ public class MiaoshaController implements InitializingBean {
      * @return
      */
     @ResponseBody
-    @PostMapping("do_miaosha2")
-    public ResultVO miaosha2(Model model, MiaoshaUser miaoshaUser, @RequestParam("goodsId")Long goodsId){
+    @PostMapping("/{path}/do_miaosha2")
+    public ResultVO miaosha2(Model model, MiaoshaUser miaoshaUser, @RequestParam("goodsId")Long goodsId,
+                             @PathVariable("path") String path){
         model.addAttribute("miaoshaUser", miaoshaUser);
+
+        //验证秒杀path
+        boolean miaoshaPathCheckFlag = miaoshaService.checkMiaoShaPath(miaoshaUser.getId(), goodsId, path);
+        if(!miaoshaPathCheckFlag){
+            return ResultUtil.error(ResultEnum.REQUEST_ILLEGAL);
+        }
 
         //内存标记，减少redis访问
         boolean overFlag = localOverMap.get(goodsId);
@@ -158,14 +165,20 @@ public class MiaoshaController implements InitializingBean {
      * 获取秒杀地址
      * @param goodsId
      * @param verifyCode
-     * @param user
+     * @param miaoshaUser
      * @return
      */
     @ResponseBody
     @GetMapping("getMiaoShaPath")
-    public ResultVO<String> getMiaoShaPath(@RequestParam("goodsId")long goodsId,
-                                           @RequestParam(value="verifyCode", defaultValue="0")int verifyCode,MiaoshaUser user){
-        String miaoShaPath  =miaoshaService.createMiaoshaPath(user, goodsId);
+    public ResultVO<String> getMiaoShaPath(@RequestParam("goodsId")Long goodsId,
+                                           @RequestParam(value="verifyCode", defaultValue="0")Integer verifyCode,MiaoshaUser miaoshaUser){
+
+        //校验验证码
+        boolean verifyCodeCheckFlag = miaoshaService.checkVerifyCode(miaoshaUser.getId(), goodsId, verifyCode);
+        if(!verifyCodeCheckFlag) {
+            return ResultUtil.error(ResultEnum.ERROR_VERIFYCODE);
+        }
+        String miaoShaPath  =miaoshaService.createMiaoshaPath(miaoshaUser.getId(), goodsId);
         return ResultUtil.success(miaoShaPath);
     }
 

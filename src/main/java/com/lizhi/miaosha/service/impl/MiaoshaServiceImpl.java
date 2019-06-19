@@ -5,6 +5,7 @@ import com.lizhi.miaosha.domain.MiaoshaUser;
 import com.lizhi.miaosha.domain.OrderInfo;
 import com.lizhi.miaosha.dto.VerifyCodeDTO;
 import com.lizhi.miaosha.enums.ResultEnum;
+import com.lizhi.miaosha.exception.GlobalException;
 import com.lizhi.miaosha.redis.JedisService;
 import com.lizhi.miaosha.redis.MiaoshaKey;
 import com.lizhi.miaosha.redis.OrderKey;
@@ -91,13 +92,13 @@ public class MiaoshaServiceImpl implements MiaoshaService {
     }
 
     @Override
-    public String createMiaoshaPath(MiaoshaUser miaoshaUser, long goodsId) {
-        //校验有待优化
-        if(miaoshaUser == null || goodsId <=0) {
-            return null;
+    public String createMiaoshaPath(Long miaoshaUserId, Long goodsId) {
+
+        if(Objects.equals(null,miaoshaUserId) || Objects.equals(null,goodsId)) {
+            throw new GlobalException(ResultEnum.SERVICE_PARAM_ERROR.fillArgs("商品id或用户id为空"));
         }
         String miaoshaPath = MD5Util.md5(UUIDUtil.uuid()+"123456");
-        jedisService.set(MiaoshaKey.getMiaoshaPath, ""+miaoshaUser.getId() + "_"+ goodsId,miaoshaPath);
+        jedisService.set(MiaoshaKey.getMiaoshaPath, ""+miaoshaUserId + "_"+ goodsId,miaoshaPath);
         return miaoshaPath;
     }
 
@@ -113,26 +114,33 @@ public class MiaoshaServiceImpl implements MiaoshaService {
     }
 
     @Override
-    public Boolean checkMiaoShaPath(MiaoshaUser miaoshaUser, long goodsId, String miaoShaPath) {
-        //校验有待优化
-        if(miaoshaUser == null || miaoShaPath == null) {
-            return false;
+    public Boolean checkMiaoShaPath(Long miaoshaUserId, Long goodsId, String miaoShaPath) {
+
+        if(Objects.equals(null,miaoshaUserId)) {
+            throw new GlobalException(ResultEnum.SERVICE_PARAM_ERROR.fillArgs("商品id为空"));
+        }else if(Objects.equals(null,goodsId)){
+            throw new GlobalException(ResultEnum.SERVICE_PARAM_ERROR.fillArgs("用户id为空"));
+        }else if(Objects.equals(null,miaoShaPath)){
+            throw new GlobalException(ResultEnum.SERVICE_PARAM_ERROR.fillArgs("秒杀路径为空"));
         }
-        String cacheMiaoShaPath = jedisService.get(MiaoshaKey.getMiaoshaPath, ""+miaoshaUser.getId() + "_"+ goodsId, String.class);
+        String cacheMiaoShaPath = jedisService.get(MiaoshaKey.getMiaoshaPath, ""+miaoshaUserId + "_"+ goodsId, String.class);
         return Objects.equals(miaoShaPath,cacheMiaoShaPath);
     }
 
     @Override
-    public Boolean checkVerifyCode(MiaoshaUser miaoshaUser, long goodsId, int verifyCode) {
-        //校验有待优化
-        if(miaoshaUser == null || goodsId <=0) {
+    public Boolean checkVerifyCode(Long miaoshaUserId, Long goodsId,Integer verifyCode) {
+        if(Objects.equals(null,miaoshaUserId)) {
+            throw new GlobalException(ResultEnum.SERVICE_PARAM_ERROR.fillArgs("商品id为空"));
+        }else if(Objects.equals(null,goodsId)){
+            throw new GlobalException(ResultEnum.SERVICE_PARAM_ERROR.fillArgs("用户id为空"));
+        }else if(Objects.equals(null,verifyCode)){
+            throw new GlobalException(ResultEnum.SERVICE_PARAM_ERROR.fillArgs("验证码为空"));
+        }
+        Integer cacheVerifyCode = jedisService.get(MiaoshaKey.getMiaoshaVerifyCode, miaoshaUserId+","+goodsId, Integer.class);
+        if(!Objects.equals(cacheVerifyCode ,verifyCode)) {
             return false;
         }
-        Integer cacheVerifyCode = jedisService.get(MiaoshaKey.getMiaoshaVerifyCode, miaoshaUser.getId()+","+goodsId, Integer.class);
-        if(Objects.equals(cacheVerifyCode,null) || !Objects.equals(cacheVerifyCode - verifyCode,0)) {
-            return false;
-        }
-        jedisService.delete(MiaoshaKey.getMiaoshaVerifyCode, miaoshaUser.getId()+","+goodsId);
+        jedisService.delete(MiaoshaKey.getMiaoshaVerifyCode, miaoshaUserId+","+goodsId);
         return true;
     }
 

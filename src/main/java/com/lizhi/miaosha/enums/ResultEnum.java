@@ -20,6 +20,7 @@ public enum ResultEnum {
     SERVICE_PARAM_ERROR(2, "业务层参数校验异常：%s"),
     NO_EXIST(3,"该条数据不存在"),
     ACCESS_LIMIT_REACHED(4, "访问太频繁!"),
+    REQUEST_ILLEGAL(5,"请求非法!"),
 
     /**
      * 登录相关状态码
@@ -37,6 +38,7 @@ public enum ResultEnum {
     NO_START(2003,"秒杀未开始"),
     END(2004,"秒杀已结束"),
     WAIT_IN_LINE(2005,"排队中"),
+    ERROR_VERIFYCODE(2006,"验证码不正确"),
     ;
 
     /**

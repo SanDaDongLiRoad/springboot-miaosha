@@ -25,11 +25,11 @@ public interface MiaoshaService {
 
     /**
      * 创建秒杀地址
-     * @param user
+     * @param miaoshaUserId
      * @param goodsId
      * @return
      */
-    String createMiaoshaPath(MiaoshaUser user, long goodsId);
+    String createMiaoshaPath(Long miaoshaUserId, Long goodsId);
 
     /**
      * 创建秒杀验证码
@@ -41,21 +41,21 @@ public interface MiaoshaService {
 
     /**
      * 校验秒杀路径
-     * @param user
+     * @param miaoshaUserId
      * @param goodsId
      * @param miaoShaPath
      * @return
      */
-    Boolean checkMiaoShaPath(MiaoshaUser user, long goodsId,String miaoShaPath);
+    Boolean checkMiaoShaPath(Long miaoshaUserId, Long goodsId,String miaoShaPath);
 
     /**
      * 校验验证码
-     * @param user
+     * @param miaoshaUserId
      * @param goodsId
      * @param verifyCode
      * @return
      */
-    Boolean checkVerifyCode(MiaoshaUser user, long goodsId,int verifyCode);
+    Boolean checkVerifyCode(Long miaoshaUserId, Long goodsId,Integer verifyCode);
 
     /**
      * 获取秒杀结果

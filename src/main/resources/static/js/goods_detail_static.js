@@ -105,7 +105,7 @@ GoodsDetailStatic = {
 
     doMiaosha : function (path){
         $.ajax({
-            url:"/miaosha/do_miaosha2",
+            url:"/miaosha/"+path+"/do_miaosha2",
             type:"POST",
             data:{
                 goodsId:$("#goodsId").val()
