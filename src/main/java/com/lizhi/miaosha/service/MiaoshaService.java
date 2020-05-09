@@ -1,8 +1,7 @@
 package com.lizhi.miaosha.service;
 
 import com.lizhi.miaosha.domain.MiaoshaUser;
-import com.lizhi.miaosha.enums.ResultEnum;
-import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
+import com.lizhi.miaosha.vo.MiaoshaGoodVO;
 import com.lizhi.miaosha.vo.ResultVO;
 
 import java.awt.image.BufferedImage;
@@ -18,10 +17,10 @@ public interface MiaoshaService {
     /**
      * 执行秒杀
      * @param miaoshaUser
-     * @param miaoshaGoodsVO
+     * @param miaoshaGoodVO
      * @return
      */
-    Long miaosha(MiaoshaUser miaoshaUser, MiaoshaGoodsVO miaoshaGoodsVO);
+    Long miaosha(MiaoshaUser miaoshaUser, MiaoshaGoodVO miaoshaGoodVO);
 
     /**
      * 创建秒杀地址

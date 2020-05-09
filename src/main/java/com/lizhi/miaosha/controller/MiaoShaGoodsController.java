@@ -2,12 +2,12 @@ package com.lizhi.miaosha.controller;
 
 import com.lizhi.miaosha.base.BaseController;
 import com.lizhi.miaosha.domain.MiaoshaUser;
-import com.lizhi.miaosha.redis.GoodsKey;
+import com.lizhi.miaosha.redis.GoodKey;
 import com.lizhi.miaosha.redis.JedisService;
 import com.lizhi.miaosha.service.MiaoshaGoodsService;
 import com.lizhi.miaosha.util.ResultUtil;
-import com.lizhi.miaosha.vo.GoodsDetailVO;
-import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
+import com.lizhi.miaosha.vo.GoodDetailVO;
+import com.lizhi.miaosha.vo.MiaoshaGoodVO;
 import com.lizhi.miaosha.vo.ResultVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +56,9 @@ public class MiaoShaGoodsController extends BaseController {
     @GetMapping("to_list")
     public String listMiaoShaGoods(HttpServletRequest request, HttpServletResponse response, Model model, MiaoshaUser miaoshaUser){
         model.addAttribute("miaoshaUser", miaoshaUser);
-        List<MiaoshaGoodsVO> miaoshaGoodsVOList = miaoshaGoodsService.queryMiaoshaGoodsVOList();
-        model.addAttribute("miaoshaGoodsVOList", miaoshaGoodsVOList);
-        return render(request, response, model, "goods_list", GoodsKey.getGoodsList, "");
+        List<MiaoshaGoodVO> miaoshaGoodVOList = miaoshaGoodsService.queryMiaoshaGoodsVOList();
+        model.addAttribute("miaoshaGoodsVOList", miaoshaGoodVOList);
+        return render(request, response, model, "goods_list", GoodKey.getGoodList, "");
     }
 
     /**
@@ -71,10 +71,10 @@ public class MiaoShaGoodsController extends BaseController {
     @GetMapping("to_detail/{goodsId}")
     public String queryMiaoShaGoodsDetail(Model model, MiaoshaUser miaoshaUser, @PathVariable("goodsId") Long goodsId){
         model.addAttribute("miaoshaUser", miaoshaUser);
-        MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
-        model.addAttribute("miaoshaGoodsVO", miaoshaGoodsVO);
-        long startDate = miaoshaGoodsVO.getStartDate().getTime();
-        long endDate = miaoshaGoodsVO.getEndDate().getTime();
+        MiaoshaGoodVO miaoshaGoodVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
+        model.addAttribute("miaoshaGoodsVO", miaoshaGoodVO);
+        long startDate = miaoshaGoodVO.getStartDate().getTime();
+        long endDate = miaoshaGoodVO.getEndDate().getTime();
         long now = System.currentTimeMillis();
         int miaoshaStatus = 0;
         int remainSeconds = 0;
@@ -111,16 +111,16 @@ public class MiaoShaGoodsController extends BaseController {
         model.addAttribute("miaoshaUser", miaoshaUser);
 
         //取缓存
-        String html = jedisService.get(GoodsKey.getGoodsDetail, ""+goodsId, String.class);
+        String html = jedisService.get(GoodKey.getGoodDetail, ""+goodsId, String.class);
         if(StringUtils.isNotEmpty(html)) {
             return html;
         }
         //手动渲染
-        MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
-        model.addAttribute("miaoshaGoodsVO", miaoshaGoodsVO);
+        MiaoshaGoodVO miaoshaGoodVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
+        model.addAttribute("miaoshaGoodsVO", miaoshaGoodVO);
 
-        long startDate = miaoshaGoodsVO.getStartDate().getTime();
-        long endDate = miaoshaGoodsVO.getEndDate().getTime();
+        long startDate = miaoshaGoodVO.getStartDate().getTime();
+        long endDate = miaoshaGoodVO.getEndDate().getTime();
         long now = System.currentTimeMillis();
 
         int miaoshaStatus = 0;
@@ -141,7 +141,7 @@ public class MiaoShaGoodsController extends BaseController {
         SpringWebContext ctx = new SpringWebContext(request,response,request.getServletContext(),request.getLocale(),model.asMap(),applicationContext);
         html = thymeleafViewResolver.getTemplateEngine().process("goods_detail", ctx);
         if(StringUtils.isNotEmpty(html)) {
-            jedisService.set(GoodsKey.getGoodsDetail, ""+goodsId, html);
+            jedisService.set(GoodKey.getGoodDetail, ""+goodsId, html);
         }
         return html;
     }
@@ -154,10 +154,10 @@ public class MiaoShaGoodsController extends BaseController {
      */
     @ResponseBody
     @GetMapping("to_detail3/{goodsId}")
-    public ResultVO<GoodsDetailVO> queryMiaoShaGoodsDetail3(MiaoshaUser miaoshaUser, @PathVariable("goodsId") Long goodsId){
-        MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
-        long startDate = miaoshaGoodsVO.getStartDate().getTime();
-        long endDate = miaoshaGoodsVO.getEndDate().getTime();
+    public ResultVO<GoodDetailVO> queryMiaoShaGoodsDetail3(MiaoshaUser miaoshaUser, @PathVariable("goodsId") Long goodsId){
+        MiaoshaGoodVO miaoshaGoodVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
+        long startDate = miaoshaGoodVO.getStartDate().getTime();
+        long endDate = miaoshaGoodVO.getEndDate().getTime();
         long now = System.currentTimeMillis();
 
         //默认秒杀进行中
@@ -173,11 +173,11 @@ public class MiaoShaGoodsController extends BaseController {
             miaoshaStatus = 2;
             remainSeconds = -1;
         }
-        GoodsDetailVO goodsDetailVO = new GoodsDetailVO();
-        goodsDetailVO.setMiaoshaGoodsVO(miaoshaGoodsVO);
-        goodsDetailVO.setMiaoshaUser(miaoshaUser);
-        goodsDetailVO.setMiaoshaStatus(miaoshaStatus);
-        goodsDetailVO.setRemainSeconds(remainSeconds);
-        return ResultUtil.success(goodsDetailVO);
+        GoodDetailVO goodDetailVO = new GoodDetailVO();
+        goodDetailVO.setMiaoshaGoodVO(miaoshaGoodVO);
+        goodDetailVO.setMiaoshaUser(miaoshaUser);
+        goodDetailVO.setMiaoshaStatus(miaoshaStatus);
+        goodDetailVO.setRemainSeconds(remainSeconds);
+        return ResultUtil.success(goodDetailVO);
     }
 }

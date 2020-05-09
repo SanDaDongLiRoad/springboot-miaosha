@@ -16,14 +16,14 @@
                     <td>库存数量</td>
                     <td>详情</td>
                 </tr>
-                <tr th:each="miaoshaGoods,miaoshaGoodsStat : ${miaoshaGoodsVOList}">
-                    <td th:text="${miaoshaGoods.goodsName}"></td>
-                    <td ><img id="goods-img" th:src="@{${miaoshaGoods.goodsImg}}"/></td>
-                    <td th:text="${miaoshaGoods.goodsPrice}"></td>
-                    <td th:text="${miaoshaGoods.miaoshaPrice}"></td>
-                    <td th:text="${miaoshaGoods.stockCount}"></td>
-                    <!--<td><a th:href="'/miaoShaGoods/to_detail2/'+${miaoshaGoods.goodsId}">详情</a></td>-->
-                    <td><a th:href="'/goods_detail.htm?goodsId='+${miaoshaGoods.goodsId}">详情</a></td>
+                <tr th:each="miaoshaGood,miaoshaGoodsStat : ${miaoshaGoodVOList}">
+                    <td th:text="${miaoshaGood.goodsName}"></td>
+                    <td ><img id="good-img" th:src="@{${miaoshaGood.goodsImg}}"/></td>
+                    <td th:text="${miaoshaGood.goodsPrice}"></td>
+                    <td th:text="${miaoshaGood.miaoshaPrice}"></td>
+                    <td th:text="${miaoshaGood.stockCount}"></td>
+                    <!--<td><a th:href="'/miaoShaGoods/to_detail2/'+${miaoshaGood.goodsId}">详情</a></td>-->
+                    <td><a th:href="'/goods_detail.htm?goodsId='+${miaoshaGood.goodsId}">详情</a></td>
                  </tr>
             </table>
         </div>

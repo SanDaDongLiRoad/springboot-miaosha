@@ -5,7 +5,7 @@ import com.lizhi.miaosha.domain.OrderInfo;
 import com.lizhi.miaosha.service.MiaoshaGoodsService;
 import com.lizhi.miaosha.service.OrderInfoService;
 import com.lizhi.miaosha.util.ResultUtil;
-import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
+import com.lizhi.miaosha.vo.MiaoshaGoodVO;
 import com.lizhi.miaosha.vo.OrderDetailVo;
 import com.lizhi.miaosha.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +45,8 @@ public class OrderInfoController {
         model.addAttribute("miaoshaUser", miaoshaUser);
         OrderInfo orderInfo = orderInfoService.queryOrderInfoById(orderIds);
         model.addAttribute("orderInfo", orderInfo);
-        MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(orderInfo.getGoodsId());
-        model.addAttribute("miaoshaGoodsVO", miaoshaGoodsVO);
+        MiaoshaGoodVO miaoshaGoodVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(orderInfo.getGoodId());
+        model.addAttribute("miaoshaGoodsVO", miaoshaGoodVO);
         return "order_detail";
     }
 
@@ -63,8 +63,8 @@ public class OrderInfoController {
         orderDetailVo.setMiaoshaUser(miaoshaUser);
         OrderInfo orderInfo = orderInfoService.queryOrderInfoById(orderIds);
         orderDetailVo.setOrderInfo(orderInfo);
-        MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(orderInfo.getGoodsId());
-        orderDetailVo.setMiaoshaGoodsVO(miaoshaGoodsVO);
+        MiaoshaGoodVO miaoshaGoodVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(orderInfo.getGoodId());
+        orderDetailVo.setMiaoshaGoodVO(miaoshaGoodVO);
         return ResultUtil.success(orderDetailVo);
     }
 }

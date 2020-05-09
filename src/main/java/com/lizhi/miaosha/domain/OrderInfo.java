@@ -23,7 +23,7 @@ public class OrderInfo extends BaseDomain {
     /**
      * 商品ID
      */
-    private Long goodsId;
+    private Long goodId;
     /**
      * 收货地址ID
      */
@@ -31,15 +31,15 @@ public class OrderInfo extends BaseDomain {
     /**
      * 商品名称
      */
-    private String goodsName;
+    private String goodName;
     /**
      * 商品数量
      */
-    private Integer goodsCount;
+    private Integer goodCount;
     /**
      * 下单价格
      */
-    private BigDecimal goodsPrice;
+    private BigDecimal goodPrice;
     /**
      * 渠道（1pc，2android，3ios）
      */

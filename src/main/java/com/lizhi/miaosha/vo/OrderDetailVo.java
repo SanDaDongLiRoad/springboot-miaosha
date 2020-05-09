@@ -21,7 +21,7 @@ public class OrderDetailVo {
     /**
      * 秒杀商品详情
      */
-    private MiaoshaGoodsVO miaoshaGoodsVO;
+    private MiaoshaGoodVO miaoshaGoodVO;
 
     /**
      * 秒杀用户信息

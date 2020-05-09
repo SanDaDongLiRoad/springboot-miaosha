@@ -12,31 +12,31 @@ import java.math.BigDecimal;
  * @date 2019/5/19
  */
 @Data
-public class Goods extends BaseDomain {
+public class Good extends BaseDomain {
     private static final long serialVersionUID = -8737422420455583287L;
 
     /**
      * 商品名称
      */
-    private String goodsName;
+    private String goodName;
     /**
      * 商品标题
      */
-    private String goodsTitle;
+    private String goodTitle;
     /**
      * 商品的图片
      */
-    private String goodsImg;
+    private String goodImg;
     /**
      * 商品的详情介绍
      */
-    private String goodsDetail;
+    private String goodDetail;
     /**
      * 商品单价
      */
-    private BigDecimal goodsPrice;
+    private BigDecimal goodPrice;
     /**
      * 商品库存
      */
-    private Integer goodsStock;
+    private Integer goodStock;
 }

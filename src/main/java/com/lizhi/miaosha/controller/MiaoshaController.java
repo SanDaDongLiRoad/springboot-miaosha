@@ -6,14 +6,14 @@ import com.lizhi.miaosha.enums.ResultEnum;
 import com.lizhi.miaosha.exception.GlobalException;
 import com.lizhi.miaosha.rabbitmq.MQSender;
 import com.lizhi.miaosha.rabbitmq.MiaoshaMessage;
-import com.lizhi.miaosha.redis.GoodsKey;
+import com.lizhi.miaosha.redis.GoodKey;
 import com.lizhi.miaosha.redis.JedisService;
 import com.lizhi.miaosha.redis.MiaoshaKey;
 import com.lizhi.miaosha.service.MiaoshaGoodsService;
 import com.lizhi.miaosha.service.MiaoshaOrderService;
 import com.lizhi.miaosha.service.MiaoshaService;
 import com.lizhi.miaosha.util.ResultUtil;
-import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
+import com.lizhi.miaosha.vo.MiaoshaGoodVO;
 import com.lizhi.miaosha.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -66,12 +66,12 @@ public class MiaoshaController implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         log.info("初始化秒杀商品库存到Redis");
-        List<MiaoshaGoodsVO> miaoshaGoodsVOList = miaoshaGoodsService.queryMiaoshaGoodsVOList();
-        if(!Objects.equals(null,miaoshaGoodsVOList) && (miaoshaGoodsVOList.size() > 0)){
-            for(int i=0;i< miaoshaGoodsVOList.size();i++){
-                MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsVOList.get(i);
-                jedisService.set(GoodsKey.getMiaoshaGoodsStock,String.valueOf(miaoshaGoodsVO.getGoodsId()),miaoshaGoodsVO.getStockCount());
-                localOverMap.put(miaoshaGoodsVO.getGoodsId(), false);
+        List<MiaoshaGoodVO> miaoshaGoodVOList = miaoshaGoodsService.queryMiaoshaGoodsVOList();
+        if(!Objects.equals(null, miaoshaGoodVOList) && (miaoshaGoodVOList.size() > 0)){
+            for(int i = 0; i< miaoshaGoodVOList.size(); i++){
+                MiaoshaGoodVO miaoshaGoodVO = miaoshaGoodVOList.get(i);
+                jedisService.set(GoodKey.getMiaoshaGoodStock,String.valueOf(miaoshaGoodVO.getGoodId()), miaoshaGoodVO.getStockCount());
+                localOverMap.put(miaoshaGoodVO.getGoodId(), false);
             }
         }
     }
@@ -88,10 +88,10 @@ public class MiaoshaController implements InitializingBean {
     public ResultVO<Long> miaosha(Model model, MiaoshaUser miaoshaUser, @RequestParam("goodsId")Long goodsId){
         model.addAttribute("miaoshaUser", miaoshaUser);
 
-        MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
+        MiaoshaGoodVO miaoshaGoodVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
         //判断是否在秒杀期间
-        long startDate = miaoshaGoodsVO.getStartDate().getTime();
-        long endDate = miaoshaGoodsVO.getEndDate().getTime();
+        long startDate = miaoshaGoodVO.getStartDate().getTime();
+        long endDate = miaoshaGoodVO.getEndDate().getTime();
         long now = System.currentTimeMillis();
         if(now < startDate){
             throw new GlobalException(ResultEnum.NO_START);
@@ -101,7 +101,7 @@ public class MiaoshaController implements InitializingBean {
         }
 
         //判断库存是否充足
-        if(Objects.equals(null,miaoshaGoodsVO) || Objects.equals(0,miaoshaGoodsVO.getStockCount())){
+        if(Objects.equals(null, miaoshaGoodVO) || Objects.equals(0, miaoshaGoodVO.getStockCount())){
             throw new GlobalException(ResultEnum.MIAOSHA_OVER);
         }
 
@@ -111,7 +111,7 @@ public class MiaoshaController implements InitializingBean {
             throw new GlobalException(ResultEnum.REPEATE_MIAOSHA);
         }
         //开始秒杀
-        Long orderId = miaoshaService.miaosha(miaoshaUser,miaoshaGoodsVO);
+        Long orderId = miaoshaService.miaosha(miaoshaUser, miaoshaGoodVO);
         return ResultUtil.success(orderId);
     }
 
@@ -141,7 +141,7 @@ public class MiaoshaController implements InitializingBean {
         }
 
         //预减库存
-        long stock = jedisService.decr(GoodsKey.getMiaoshaGoodsStock, ""+goodsId);
+        long stock = jedisService.decr(GoodKey.getMiaoshaGoodStock, ""+goodsId);
         if(stock < 0) {
             localOverMap.put(goodsId, true);
             jedisService.set(MiaoshaKey.isGoodsOver, ""+goodsId, true);

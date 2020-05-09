@@ -3,14 +3,12 @@ package com.lizhi.miaosha.rabbitmq;
 import com.lizhi.miaosha.convert.CommonConvert;
 import com.lizhi.miaosha.domain.MiaoshaOrder;
 import com.lizhi.miaosha.domain.MiaoshaUser;
-import com.lizhi.miaosha.enums.ResultEnum;
-import com.lizhi.miaosha.exception.GlobalException;
 import com.lizhi.miaosha.redis.JedisService;
 import com.lizhi.miaosha.redis.MiaoshaKey;
 import com.lizhi.miaosha.service.MiaoshaGoodsService;
 import com.lizhi.miaosha.service.MiaoshaOrderService;
 import com.lizhi.miaosha.service.MiaoshaService;
-import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
+import com.lizhi.miaosha.vo.MiaoshaGoodVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,9 +64,9 @@ public class MQReceiver {
         MiaoshaMessage miaoshaMessage  = CommonConvert.stringToBean(message, MiaoshaMessage.class);
         long goodsId = miaoshaMessage.getGoodsId();
         MiaoshaUser miaoshaUser = miaoshaMessage.getMiaoshaUser();
-        MiaoshaGoodsVO miaoshaGoodsVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
+        MiaoshaGoodVO miaoshaGoodVO = miaoshaGoodsService.queryMiaoshaGoodsVOById(goodsId);
         //判断库存是否充足
-        if(Objects.equals(null,miaoshaGoodsVO) || Objects.equals(0,miaoshaGoodsVO.getStockCount())){
+        if(Objects.equals(null, miaoshaGoodVO) || Objects.equals(0, miaoshaGoodVO.getStockCount())){
             jedisService.set(MiaoshaKey.isGoodsOver, ""+goodsId, true);
             return;
         }
@@ -78,6 +76,6 @@ public class MQReceiver {
         if(!Objects.equals(null,miaoshaOrder)){
             return;
         }
-        miaoshaService.miaosha(miaoshaMessage.getMiaoshaUser(),miaoshaGoodsVO);
+        miaoshaService.miaosha(miaoshaMessage.getMiaoshaUser(), miaoshaGoodVO);
     }
 }

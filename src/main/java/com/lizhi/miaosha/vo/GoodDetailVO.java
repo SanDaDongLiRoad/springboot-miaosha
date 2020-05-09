@@ -10,12 +10,12 @@ import lombok.Data;
  * @date 2019/6/4
  */
 @Data
-public class GoodsDetailVO {
+public class GoodDetailVO {
 
     /**
      * 秒杀商品详情
      */
-    private MiaoshaGoodsVO miaoshaGoodsVO;
+    private MiaoshaGoodVO miaoshaGoodVO;
 
     /**
      * 秒杀用户信息

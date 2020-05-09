@@ -17,18 +17,16 @@ import com.lizhi.miaosha.util.MD5Util;
 import com.lizhi.miaosha.util.ResultUtil;
 import com.lizhi.miaosha.util.UUIDUtil;
 import com.lizhi.miaosha.util.VerifyCodeUtil;
-import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
+import com.lizhi.miaosha.vo.MiaoshaGoodVO;
 import com.lizhi.miaosha.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Date;
 import java.util.Objects;
-import java.util.Random;
 
 
 /**
@@ -55,26 +53,26 @@ public class MiaoshaServiceImpl implements MiaoshaService {
 
     @Transactional
     @Override
-    public Long miaosha(MiaoshaUser miaoshaUser, MiaoshaGoodsVO miaoshaGoodsVO) {
-        log.info("miaosha requestParam miaoshaUser is: {},miaoshaGoodsVO is {}",miaoshaUser,miaoshaGoodsVO);
+    public Long miaosha(MiaoshaUser miaoshaUser, MiaoshaGoodVO miaoshaGoodVO) {
+        log.info("miaosha requestParam miaoshaUser is: {},miaoshaGoodVO is {}",miaoshaUser, miaoshaGoodVO);
 
         //开始秒杀
         //1.减库存
-        boolean reduceStockFlag = miaoshaGoodsService.reduceStock(miaoshaGoodsVO.getGoodsId());
+        boolean reduceStockFlag = miaoshaGoodsService.reduceStock(miaoshaGoodVO.getGoodId());
 
         if(!reduceStockFlag){
-            jedisService.set(MiaoshaKey.isGoodsOver, ""+miaoshaGoodsVO.getGoodsId(), true);
+            jedisService.set(MiaoshaKey.isGoodsOver, ""+ miaoshaGoodVO.getGoodId(), true);
             return null;
         }
 
         //2.生成订单
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setUserId(miaoshaUser.getId());
-        orderInfo.setGoodsId(miaoshaGoodsVO.getGoodsId());
+        orderInfo.setGoodId(miaoshaGoodVO.getGoodId());
         orderInfo.setDeliveryAddrId(0L);
-        orderInfo.setGoodsName(miaoshaGoodsVO.getGoodsName());
-        orderInfo.setGoodsCount(1);
-        orderInfo.setGoodsPrice(miaoshaGoodsVO.getMiaoshaPrice());
+        orderInfo.setGoodName(miaoshaGoodVO.getGoodName());
+        orderInfo.setGoodCount(1);
+        orderInfo.setGoodPrice(miaoshaGoodVO.getMiaoshaPrice());
         orderInfo.setOrderChannel(1);
         orderInfo.setOrderStatus(0);
         orderInfo.setCreateDate(new Date());
@@ -82,12 +80,12 @@ public class MiaoshaServiceImpl implements MiaoshaService {
 
         //3.生成秒杀订单
         MiaoshaOrder miaoshaOrder = new MiaoshaOrder();
-        miaoshaOrder.setGoodsId(miaoshaGoodsVO.getGoodsId());
+        miaoshaOrder.setGoodId(miaoshaGoodVO.getGoodId());
         miaoshaOrder.setOrderId(orderInfo.getId());
         miaoshaOrder.setUserId(miaoshaUser.getId());
         miaoshaOrderService.saveMiaoshaOrder(miaoshaOrder);
 
-        jedisService.set(OrderKey.getMiaoshaOrderByUidGid, ""+miaoshaUser.getId()+"_"+miaoshaGoodsVO.getGoodsId(), miaoshaOrder);
+        jedisService.set(OrderKey.getMiaoshaOrderByUidGid, ""+miaoshaUser.getId()+"_"+ miaoshaGoodVO.getGoodId(), miaoshaOrder);
         return orderInfo.getId();
     }
 

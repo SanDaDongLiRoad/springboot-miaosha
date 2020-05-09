@@ -12,27 +12,27 @@ import java.util.Date;
  * @date 2019/5/19
  */
 @Data
-public class MiaoshaGoodsVO {
+public class MiaoshaGoodVO {
 
     /**
      * 商品id
      */
-    private Long goodsId;
+    private Long goodId;
 
     /**
      * 商品名称
      */
-    private String goodsName;
+    private String goodName;
 
     /**
      * 商品的图片
      */
-    private String goodsImg;
+    private String goodImg;
 
     /**
      * 商品原价
      */
-    private BigDecimal goodsPrice;
+    private BigDecimal goodPrice;
 
     /**
      * 秒杀价格

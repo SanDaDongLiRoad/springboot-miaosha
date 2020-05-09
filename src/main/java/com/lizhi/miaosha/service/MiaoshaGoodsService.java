@@ -1,6 +1,6 @@
 package com.lizhi.miaosha.service;
 
-import com.lizhi.miaosha.vo.MiaoshaGoodsVO;
+import com.lizhi.miaosha.vo.MiaoshaGoodVO;
 
 import java.util.List;
 
@@ -16,14 +16,14 @@ public interface MiaoshaGoodsService {
      * 查询秒杀商品列表页的秒杀商品列表
      * @return
      */
-    List<MiaoshaGoodsVO> queryMiaoshaGoodsVOList();
+    List<MiaoshaGoodVO> queryMiaoshaGoodsVOList();
 
     /**
      * 根据商品id查询秒杀商品
      * @param goodsId
      * @return
      */
-    MiaoshaGoodsVO queryMiaoshaGoodsVOById(Long goodsId);
+    MiaoshaGoodVO queryMiaoshaGoodsVOById(Long goodsId);
 
     /**
      * 减库存

@@ -13,13 +13,13 @@ import java.util.Date;
  * @date 2019/5/19
  */
 @Data
-public class MiaoshaGoods extends BaseDomain {
+public class MiaoshaGood extends BaseDomain {
     private static final long serialVersionUID = 908482003288559126L;
 
     /**
      * 商品Id
      */
-    private Long goodsId;
+    private Long goodId;
     /**
      * 秒杀价格
      */

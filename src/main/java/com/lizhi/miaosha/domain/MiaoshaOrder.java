@@ -24,5 +24,5 @@ public class MiaoshaOrder extends BaseDomain {
     /**
      * 商品ID
      */
-    private Long goodsId;
+    private Long goodId;
 }
