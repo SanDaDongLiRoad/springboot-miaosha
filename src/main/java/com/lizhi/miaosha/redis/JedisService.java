@@ -81,10 +81,9 @@ public class JedisService {
      * 判断key是否存在
      * @param prefix
      * @param key
-     * @param <T>
      * @return
      */
-    public <T> boolean exists(KeyPrefix prefix, String key) {
+    public boolean exists(KeyPrefix prefix, String key) {
         Jedis jedis = null;
         try {
             jedis =  jedisPool.getResource();
@@ -119,10 +118,9 @@ public class JedisService {
      * 增加值
      * @param prefix
      * @param key
-     * @param <T>
      * @return
      */
-    public <T> Long incr(KeyPrefix prefix, String key) {
+    public Long incr(KeyPrefix prefix, String key) {
         Jedis jedis = null;
         try {
             jedis =  jedisPool.getResource();
@@ -138,10 +136,9 @@ public class JedisService {
      * 减少值
      * @param prefix
      * @param key
-     * @param <T>
      * @return
      */
-    public <T> Long decr(KeyPrefix prefix, String key) {
+    public Long decr(KeyPrefix prefix, String key) {
         Jedis jedis = null;
         try {
             jedis =  jedisPool.getResource();

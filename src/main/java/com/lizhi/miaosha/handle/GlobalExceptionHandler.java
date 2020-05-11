@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
-    public ResultVO<String> exceptionHandler(Exception e){
+    public ResultVO exceptionHandler(Exception e){
         log.error("【异常信息】{}", e.getMessage());
         if(e instanceof GlobalException) {
             GlobalException globalException = (GlobalException)e;
